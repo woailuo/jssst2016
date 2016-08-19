@@ -18,7 +18,12 @@ freedom, if a program does not consume unbounded number of memory
 cells during execution, is a very crucial issue.
 
 \begin{exmp}\label{ex:ex1}
-\begin{figure}[h]
+  \begin{figure}[h]
+%% 1  \Rtab $h()$= \dtb \dtb\dtb\Rtab$h'()$= \\
+%% 2  \dtb $\LET \; x = \MALLOC  \; \IN$ \dtb \Rtab$\LET \; x = \MALLOC  \; \IN$\\
+%% 3  \dtb $\LET \; y = \MALLOC  \; \IN$ \dtb \Rtab$\LET \; y = \MALLOC  \; \IN$\\
+%% 4  \dtb $\Free(x)$; $\Free(y) $;\;$h()$ \dtb \Rtab\ \ $h'()$; $\Free\Cirx$; \ $\Free(y)$
+[error here]
 \caption{Memory leaks in nonterminating programs.}
 \label{ex:np}
 \end{figure}
@@ -66,7 +71,14 @@ means function \(foo\) consumes unbounded number of memory cells,
 although the original program is \emph{total} memory-leak freedom.
 
 \begin{exmp}\label{ex:ex2}
-\begin{figure}[h]
+  \begin{figure}[h]
+%% 1  \dtb $foo()$ =  \\
+%% 2    \dtb \dtb  $\LET y = \MALLOC \IN $ \\
+%% 3    \dtb \dtb  $\LET x = \MALLOC \IN $\\
+%% 4    \dtb \dtb  $\IFNULL(*y) \ \THEN \ \SKIP \ \ELSE \LET x_1 = \MALLOC \IN  *x \leftarrow x_1  ;$ \\
+%% 5   \dtb \dtb   $\IFNULL(*y) \ \THEN \ \SKIP \ \ELSE \Free(*x) ;$ \\
+%% 6   \dtb \dtb   $\Free(x)$ ; $\Free(y)$ ; $foo()$
+[error here]
 \caption{a nonterminating program with conditionals}
 \label{ex:np2}
 \end{figure}
