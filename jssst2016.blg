@@ -1,0 +1,51 @@
+This is pBibTeX, Version 0.99d-j0.33 (utf8.euc) (TeX Live 2013)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: jssst2016.aux
+The style file: jssst.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: tan.bib
+Warning--I didn't find a database entry for ""
+Warning--Missing required argument pages in DBLP:journals/lmcs/KobayashiSW06
+You've used 11 entries,
+            2588 wiz_defined-function locations,
+            678 strings with 7904 characters,
+and the built_in function-call counts, 5398 in all, are:
+= -- 429
+> -- 309
+< -- 25
++ -- 79
+- -- 67
+* -- 357
+:= -- 712
+add.period$ -- 11
+call.type$ -- 11
+change.case$ -- 48
+chr.to.int$ -- 88
+cite$ -- 12
+duplicate$ -- 195
+empty$ -- 438
+format.name$ -- 108
+if$ -- 1202
+int.to.chr$ -- 0
+int.to.str$ -- 11
+missing$ -- 11
+newline$ -- 36
+num.names$ -- 38
+pop$ -- 61
+preamble$ -- 1
+purify$ -- 136
+quote$ -- 0
+skip$ -- 277
+stack$ -- 0
+substring$ -- 337
+swap$ -- 88
+text.length$ -- 9
+text.prefix$ -- 88
+top$ -- 0
+type$ -- 44
+warning$ -- 1
+while$ -- 55
+width$ -- 13
+write$ -- 101
+is.kanji.str$ -- 0
+(There were 2 warnings)
