@@ -90,7 +90,7 @@ statement $s$.
  \[
  c ::= \scon\Sirx \mid \snull \mid \snnull.
  \]
- We use $C$ for a set of facts.
+ We use $C$ for a multiset of facts.
 \end{myDef}
 A fact is used in the semantics to keep track of the information about
 constantness and nullness.  The fact \(\scon\Sirx\) represents that $*x$
@@ -111,7 +111,8 @@ infinite set \(\mathcal{H}\) of \(\emph{heap addresses}\) ranged over by
 \item \(s\) is the statement that is being executed,
 \item \(n\) is the number of the memory cells available for allocation,
       and
-\item \(C\) is a set of \emph{facts} that holds at the current configuration.
+\item \(C\) is a multiset of \emph{facts} that holds at the current
+      configuration.
 \end{itemize}
 
 The operational semantics of the language \(\mathcal{L}\) is given by a
@@ -167,6 +168,28 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 
 \rulesp
 
+\infax[Sem-ConstSeq]
+{\langle H, R, \scon\Sirx s, n, C \rangle
+\rightarrow_{D}
+\langle H, R, s;\Endconst , n, C \cup \{\scon\Sirx\} \rangle}
+
+\rulesp
+
+ \infrule[Sem-ConstSkip]
+   {C' = \FILTER(C, *x)}
+   {\langle H, R,
+     \Endconst, n, C \rangle \rightarrow_{D} \langle
+     H, R, \SKIP , n, C' \rangle}
+
+\rulesp
+
+\infrule[Sem-Assign]
+{\forall z. R(x) = R(z) \implies \scon(z) \notin C}
+{ \langle H \set{R(x) \mapsto v}, R, *x \leftarrow y , n, C\rangle \xlongrightarrow{}_{D}
+  \langle H \Lfc R(x) \mapsto R(y) \Rfc , R, \SKIP , n, C \rangle }
+
+\rulesp
+
 \infrule[Sem-IfNullT]
 {H(R(x)) = \NULL \andalso \scon\Sirx \notin C}
 {\langle H \coma R \coma \IFNULL\Sirx \ \THEN   s_{1}\ \ELSE\  s_{2} \coma  n, C \rangle
@@ -197,28 +220,6 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 {\langle H \coma R \coma \IFNULL\Sirx\ \THEN  s_{1}\ \ELSE  s_{2} \coma  n, C\rangle
   \xlongrightarrow{\snnull}_D
   \langle H\coma R\coma s_{2} \coma  n, C\cup \{\snnull\} \rangle}
-
-\rulesp
-
- \infrule[Sem-ConstSkip]
-   {C' = \FILTER_C(C, *x)}
-   {\langle H, R,
-     \Endconst, n, C \rangle \rightarrow_{D} \langle
-     H, R, \SKIP , n, C' \rangle}
-
-\rulesp
-
-\infax[Sem-ConstSeq]
-{\langle H, R, \scon\Sirx s, n, C \rangle
-\rightarrow_{D}
-\langle H, R, s;\Endconst , n, C \cup \{\scon\Sirx\} \rangle}
-
-\rulesp
-
-\infrule[Sem-Assign]
-{\scon\Sirx \notin C}
-{ \langle H \set{R(x) \mapsto v}, R, *x \leftarrow y , n, C\rangle \xlongrightarrow{}_{D}
-  \langle H \Lfc R(x) \mapsto R(y) \Rfc , R, \SKIP , n, C \rangle }
 
 \rulesp
 
@@ -273,7 +274,7 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 \rulesp
 
 \infrule[Sem-AssignConstExn]
-{ \forall z.\scon(*z) \in C \mbox{ and } R(x) = R(z)}
+{ \exists z. \scon(*z) \in C \mbox{ and } R(x) = R(z)}
 { \langle H \set{R(x) \mapsto v}, R, *x \leftarrow y , n, C\rangle \xlongrightarrow{}_{D}
   \CONSTEX}
 
@@ -294,60 +295,87 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 \end{figure*}
 
 The relation $\xlongrightarrow{\rho}_D$ is the least relation that
-satisfies the rules in Figure~\ref{fig:transitionRules}.  We explain the
-important rules.
+satisfies the rules in Figure~\ref{fig:transitionRules}.  The semantics,
+except for the multiset of facts $C$, is almost the same as the previous
+framework~\cite{}.  Important invariants of a configuration is that (1)
+if $C$ contains $\scon(*x)$, then the value of the expression $*x$ is
+not changed in the next step and (2) if $C$ contains $\snull$ (resp.,
+$\snnull$), then the value of $*x$ is equal to $\NULL$ (resp., not equal
+to null).
+
+In order to manipulate the $C$ part of a configuration, we use a
+function $\FILTER(C, *x)$ in the rules for the operational semantics
+defined as follows:
+\[
+\begin{array}{l}
+ \FILTER(C, *x) =\\
+ \quad \LET\ C' = C - \scon\Sirx\ \IN\\
+ \quad\quad \IF\ \scon\Sirx \in C'\ \THEN\ C'\\
+ \quad\quad \ELSE\ C'\backslash\{\snull,\snnull\}.
+\end{array}
+\]
+The function $\FILTER(C, *x)$ sets $C'$ to the multiset obtained by
+removing one $\scon(*x)$ from $C$.  (Recall that $C$ is a
+\emph{multiset} of facts.)  If $C'$ does not contain $\scon(*x)$, then
+it deletes all the facts related to $*x$.  Otherwise, it returns $C'$.
+
+We explain the rules related to path sensitivity and the
+constantness annotations; for the other rules, see~\cite{}.
 \begin{itemize}
-\item \textsc{Sem-ConstSeq}: \(\scon\Sirx\) and \(\Endconst\) together
-  guarantees a pointer pointed to by \(*x\) cannot be changed in the
-  statement \(s\). The set \(C\) with the new added \(\scon\Sirx\)
-  describes this status.
-
-\item \rn{Sem-IfNullT} and \rn{Sem-IfConstNullT}: these two rules
-  represents if \(\Sirx\) is a null pointer, the statement \(s_1\)
-  will be executed. the difference of the two is if the \(\scon\Sirx\)
-  is in set \(C\) then\(\snull\) is added to \(C\), which means
-  \(\Sirx\) is a null pointer and cannot be updated from now on;
-  otherwise \(\Sirx\) can be changed, like \rn{Sem-IfNullT}.
-
-\item \rn{Sem-Free}: deallocating one memory cell pointed by \(x\) is
-  to remove linkage of pointer variable \(x\) to heap; this action
-  will release one memory cell space, which increments the number of
-  available memory cells \(n\) by one. 
-
-\item \rn{Sem-Malloc} and \rn{Sem-OutOfMem}: allocating one memory
-  cell is described as updating the heap by adding a fresh heap
-  variable \(l\) to anywhere \(v\) of the heap and adding the linkage
-  of a fresh register variable \(x'\) to that \(l\); This action is
-  allowed only if the number of available memory cells is positive;
-  otherwise \(\OVERFLOW\).
-  
-\item \rn{Sem-AssignExn}, \rn{Sem-FreeExn} and \rn{Sem-DerefExn}: these
-  rules express that accessing a null pointer or a dangling pointer
-  will give raise to an exceptional state \(\MEMEX\).  However, in
-  this paper we do not see the state \(\MEMEX\) is an erroneous state,
-  hence a well-typed program may lead to these states. One thing we
-  should notice the command \(\FREE\), if \(x\) is a null pointer,
-  raises state \(\MEMEX\) in the current semantics, although it is
-  equivalent to \(\SKIP\) in the C language.
-  
-\item \rn{Sem-AssignConstExn}: expressing that if a constant memory
-  cell pointed to by \(x\) or its aliases are changed it will raise
-  exceptional state \(\CONSTEX\).
+\item \textsc{Sem-ConstSeq}: The end of the $\mathbf{const}$ block is
+      marked at the end of the current continuation.  The fact
+      $\scon(*x)$ is also added to $C$ to record that $*x$ is declared
+      to be constant until $\Endconst$ is encountered.
+\item \textsc{Sem-Assign} and \textsc{Sem-ConstAssignExn}: These rules
+      handle assignment statements.  If constantness of $*z$ is declared
+      (i.e., $\scon(*z) \in C$), then a write operation to $*z$ leads
+      to an exception $\CONSTEX$.  This exception is raised if a
+      constantness annotation provided by a programmer is wrong.  The
+      type system introduced later does not guarantee unreachability to
+      this exceptional state.
+\item \textsc{Sem-IfNullT}, \textsc{Sem-IfNullF},
+      \textsc{Sem-IfConstNullT}, and \textsc{Sem-IfConstNullF}: These
+      rules handle an $\mathbf{if}$-statements depending on whether $*x$
+      is null or not.  The semantics records which branch is taken to
+      the multiset of facts $C$ only if $C$ contains $\Sirx$.
+      Otherwise, even if the semantics recorded $\snull(*x)$ or
+      $\snnull(*x)$ to $C$, it may not be reliable in the sense of the
+      invariant (2) above since the value of $*x$ may be changed by an
+      assignment via an alias of $x$.
+\item \textsc{Sem-ConstSkip}: By using the function $\FILTER$ above,
+      this rule removes one $\mathbf{endconst}(*x)$ from $C$ and
+      conducts ``garbage collection'' of the facts related to $*x$ if
+      necessary.
+% \item \rn{Sem-Free}: deallocating one memory cell pointed by \(x\) is
+%   to remove linkage of pointer variable \(x\) to heap; this action
+%   will release one memory cell space, which increments the number of
+%   available memory cells \(n\) by one. 
+% \item \rn{Sem-Malloc} and \rn{Sem-OutOfMem}: allocating one memory
+%   cell is described as updating the heap by adding a fresh heap
+%   variable \(l\) to anywhere \(v\) of the heap and adding the linkage
+%   of a fresh register variable \(x'\) to that \(l\); This action is
+%   allowed only if the number of available memory cells is positive;
+%   otherwise \(\OVERFLOW\).
+% \item \rn{Sem-AssignExn}, \rn{Sem-FreeExn} and \rn{Sem-DerefExn}: these
+%   rules express that accessing a null pointer or a dangling pointer
+%   will give raise to an exceptional state \(\MEMEX\).  However, in
+%   this paper we do not see the state \(\MEMEX\) is an erroneous state,
+%   hence a well-typed program may lead to these states. One thing we
+%   should notice the command \(\FREE\), if \(x\) is a null pointer,
+%   raises state \(\MEMEX\) in the current semantics, although it is
+%   equivalent to \(\SKIP\) in the C language.
+% \item \rn{Sem-AssignConstExn}: expressing that if a constant memory
+%   cell pointed to by \(x\) or its aliases are changed it will raise
+%   exceptional state \(\CONSTEX\).
 
 % E \mbox{ (context)} &::=& E;s \mid [ ] 
 
 % \(E\) represents evaluation context.
 
-and \(\FILTER_C(C, *x)\) is defined by the following pseudocode.
-\[
-\begin{array}{lcl}
-  \FILTER_C(C, *x) &=& let \; C' = C - \scon\Sirx \; in \\
-  & & if \; \scon\Sirx \in \; C'\; then \; return \; C'\\
-  & & else \; return \; C'\backslash\{\snull,\snnull \}
-\end{array}
-\]
-
 \end{itemize}
+
+FROM HERE.  FROM HERE.  FROM HERE.  FROM HERE.  FROM HERE.  FROM HERE.
+FROM HERE.  FROM HERE.
 
 In order to deal with a path-sensitive program to guarantee
 \emph{total} memory-leak freedom, we redefined the several definitions
