@@ -106,6 +106,13 @@ is expressed by another constructor of a behavioral type introduced
 later, we can conclude that the behavior of \verb|h2| is $(\Malloc;
 \Free) + \TSKIP$.
 
+Concretely, we define the syntax and the semantics of the behavioral
+types extended with path-sensitive ones, extend the typing rules, and
+prove the soundness of the extended type system.  We also describe how
+to conduct type reconstruction for our type system.  We expect that this
+algorithm leads to a behavioral analyzer for a programming language with
+manual memory management primitives.
+
 % \begin{exmp}\label{ex:ex1}
 
 % Figure~\ref{ex:np} describes partial and total memory-leak freedom.
@@ -184,15 +191,14 @@ later, we can conclude that the behavior of \verb|h2| is $(\Malloc;
 % not change between these two choices, which we can definitely judge it
 % is a total memory-leak free program.
 
-%%%% FROMHERE FROMHERE FROMHERE %%%%
-
 The rest of this paper is structured as
 follows. Section~\ref{sec:language} describes an imperative language
 with allocation and deallocation primitives and its operational
 semantics. Section~\ref{sec:typesystem} introduces the extended
-behavioral type system with dependent
+behavioral type system with path-sensitive behavioral
 types. Section~\ref{sec:reconstruction} describes the type
-reconstruction procedure; Section~\ref{sec:experiments} shows some
-experiments and give a discussion; Section~\ref{sec:relatedwork}
-describes the related works; Section~\ref{sec:conclusion} concludes this
-paper.
+reconstruction procedure.  
+% Section~\ref{sec:experiments} shows some
+% experiments and give a discussion;
+Section~\ref{sec:relatedwork} discusses the related work.
+Section~\ref{sec:conclusion} concludes this paper.
