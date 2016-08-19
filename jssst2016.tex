@@ -1,8 +1,9 @@
 % -*- encoding: euc-jp -*-
-
 \documentclass[T]{compsoft}
 \taikai{2016}
 \pagestyle {empty}
+
+\raggedbottom
 
 \usepackage [dvipdfmx] {graphicx}
 \usepackage{extarrows}
@@ -58,7 +59,7 @@
 %% \newcommand\assxn{\mathbf{assume(x != null)}}
 \newcommand\const{\mathbf{const}(\sigma, n)}
 \newcommand\snull{\mathbf{null}\Sirx}
-\newcommand\snnull{\mathbf{null}\Sirx}
+\newcommand\snnull{\neg\mathbf{null}\Sirx}
 
 \newcommand\sassx{\mathbf{assume}(\xnull)}
 \newcommand\sassxn{\mathbf{assume}(\xnnull)}
@@ -67,6 +68,10 @@
 \newcommand\scon{\mathbf{const}}
 \newcommand\Startconst{\mathbf{startconst}\Sirx}
 \newcommand\Endconst{\mathbf{endconst}\Sirx}
+
+\newcommand\rulesp{\vspace{1mm}}
+
+\newcommand\FILTER{\mathit{filter}}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
