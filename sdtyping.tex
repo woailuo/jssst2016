@@ -1,0 +1,73 @@
+\section{Syntax Directed Typing Rules}
+
+\begin{minipage}{\textwidth}
+
+$$
+     \frac{ C = \emptyset}
+           {\Theta; \Gamma; C \vdash \SKIP : \mathbf{0}}
+      \Rtab \mbox{(ST-Skip)}
+$$
+$$
+      \frac{\Theta;\Gamma ; C_{1} \vdash s_{1} : P_{1} \Rtab \Theta; \Gamma ; C_{2} \vdash s_{2} : P_{2} \Rtab C = C_{1}\cup C_{2} \cup \{ P_{1};P_{2} \le P\}}
+      {\Theta;\Gamma; C \vdash s_{1};s_{2} : P}
+      \Rtab \mbox{(ST-Seq)}
+$$
+$$
+      \frac{\Theta;\Gamma;C_{1} \vdash y \Rtab \Theta;\Gamma; C_{2} \vdash x : \Rtab C = C_{1}\cup C_{2}}
+      {\Theta;\Gamma; C \vdash *x \leftarrow y : \mathbf{0}}
+      \Rtab \mbox{(ST-Assign)}
+$$
+$$
+\frac {\Theta;\Gamma;C_1 \vdash x \andalso C = C_1}
+      { \Theta; \Gamma; C \vdash \Endconst:\Endconst }
+      \Rtab \mbox{(ST-EndConst)}
+      $$
+
+$$
+ \frac{ \Theta; \Gamma; C_1 \vdash x \andalso
+     \Theta; \Gamma; C_2 \vdash s:P_1 \andalso C =
+    C_1 \cup C_2 \cup \{ P_1 \le P \} }
+  {\Theta; \Gamma; C \vdash
+   \scon\Sirx s : \scon\Sirx P}
+ \mbox{(ST-Const)}
+$$
+$$
+      \frac
+      {\Theta;\Gamma; C_1 \vdash x \andalso C = C_1}
+      {\Gamma ; C \vdash \Free (x) : \Free}
+     \Rtab \mbox{(ST-Free)}
+$$
+$$
+     \frac{\Theta;\Gamma, x ; C_{1} \vdash s : P_{1} \Rtab C = C_{1} \cup\{P_{1}\le P\}}
+     {\Theta;\Gamma; C \vdash \LET x = \Malloc() \; \IN s : \LET x = \Malloc \; \IN P}
+     \Rtab \mbox{(ST-Malloc)}
+$$
+$$
+     \frac{\Theta;\Gamma; C_{1} \vdash y \Rtab \Theta;\Gamma, x ; C_{2} \vdash s : P_{1} \Rtab C = C_{1}\cup C_{2} \cup \{P_{1} \le P \}}
+     {\Theta;\Gamma ; C \vdash \LET x = y \;  \IN s : \LET x = y \; \IN  P}
+     \Rtab \mbox{(ST-LetEq)}
+$$
+$$
+     \frac{\Theta;\Gamma ; C_{1} \vdash y \Rtab \Theta;\Gamma, x ; C_{2} \vdash s : P_{1} \Rtab C = C_{1}\cup C_{2}\cup\{P_{1} \le P\}}
+     {\Theta;\Gamma ; C \vdash \LET x = *y \; \IN s : \LET x = *y \; \IN P}
+     \Rtab \mbox{(ST-LetDref)}
+$$
+$$
+     \frac{\Theta;\Gamma; C_{1} \vdash x \Rtab \Theta;\Gamma; C_{2} \vdash s_{1} : P_1 \Rtab \Theta;\Gamma; C_{3} \vdash s_{2} : P_2  \Rtab  C = C_{1} \cup C_{2} \cup C_{3} \cup  \{ (*x)(P_1,P_2) \le P \}}
+     {\Theta;\Gamma; C \vdash \IFNULL\Sirx \THEN s_{1} \ELSE s_{2} : P }
+    \; \;  \mbox{(ST-IfNull)}
+$$
+$$
+     \frac{\Theta(f) = P_{1} \Rtab C = P_{1} \le P}
+     {\Gamma,\vec{x}:\vec{\tau} \vdash f(\vec{x}) : P }
+     \Rtab \mbox{(ST-Call)}
+$$
+$$
+     \frac{\Theta \vdash D : \Theta \Rtab \Theta ; \emptyset ; C_{1} \vdash s : P \Rtab C = C_{1}\cup\{OK_{n}(P, F)\}}
+     {C \vdash (D , s) }
+     \Rtab \mbox{(ST-Program)}
+$$
+
+
+\end{minipage}
+
