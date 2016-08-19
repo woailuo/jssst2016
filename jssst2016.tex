@@ -7,7 +7,8 @@
 \usepackage [dvipdfmx] {graphicx}
 \usepackage{extarrows}
 \usepackage{bcprules,amsmath,amsthm,amssymb,amsfonts,extarrows,amsopn,enumerate,xcolor,url}
-%% \usepackage[sort]{cite}
+\usepackage[sort]{cite}
+\usepackage{alltt}
 %% \usepackage{graphicx}
 %% \usepackage{boxedminipage}
 %% \usepackage{url}
@@ -17,7 +18,7 @@
 
 \newcommand\tB{\;|\;}
 \newcommand\LET{\mathbf{let}\;}
-\newcommand\FREE{\mathbf{free}(x)\;}
+\newcommand\FREE{\mathbf{free}(x)}
 \newcommand\IN{\mathbf{in}\;}
 \newcommand\SKIP{\mathbf{skip}}
 \newcommand\Rtab{\; \; \; \;}
@@ -32,7 +33,7 @@
 \newcommand\Lb{\left[}
 \newcommand\Rb{\right]}
 \newcommand\coma{,\;}
-\newcommand\MALLOC{\mathbf{malloc()}\;}
+\newcommand\MALLOC{\mathbf{malloc()}}
 \newcommand\Malloc{\mathbf{malloc}}
 \newcommand\Free{\mathbf{free}}
 \newcommand\Cirx{(x)}
@@ -88,10 +89,10 @@
 
 \title{An Extended Behavioral Type System \\ for Memory-Leak Freedom}
 
-\author{Qi Tan　Kohei Suenaga　Atsushi Igarashi
-\ejtitle{Concurrent Operations on Splay Trees.}
-\shozoku{for}{example}%
-{Dept.\ of Information and Computer Science, Waseda University}}
+\author{Qi Tan　Kohei Suenaga　Atsushi Igarashi}
+% \ejtitle{Concurrent Operations on Splay Trees.}
+% \shozoku{for}{example}%
+% {Dept.\ of Information and Computer Science, Waseda University}}
 
 \Jabstract{%
 }

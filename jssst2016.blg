@@ -1,14 +1,15 @@
-This is pBibTeX, Version 0.99d-j0.33 (utf8.euc) (TeX Live 2013)
+This is BibTeX, Version 0.99d (TeX Live 2015)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: jssst2016.aux
 The style file: jssst.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: tan.bib
+Warning--I didn't find a database entry for "tanPPL2014"
 Warning--I didn't find a database entry for ""
 Warning--Missing required argument pages in DBLP:journals/lmcs/KobayashiSW06
 You've used 11 entries,
             2588 wiz_defined-function locations,
-            678 strings with 7904 characters,
+            679 strings with 7928 characters,
 and the built_in function-call counts, 5398 in all, are:
 = -- 429
 > -- 309
@@ -47,5 +48,4 @@ warning$ -- 1
 while$ -- 55
 width$ -- 13
 write$ -- 101
-is.kanji.str$ -- 0
-(There were 2 warnings)
+(There were 3 warnings)
