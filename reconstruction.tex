@@ -8,8 +8,9 @@ and well-typed by constructing a derivation tree based on the rules in
 Figure~\ref{fig:TypingRules}. According to this procedure, the
 generated constraint is either a subtyping constraint \(P \le \alpha
 \) or \(\OK_\nu(\alpha, F)\) in which \(\nu\) represents an unknown
-number of available memory cells. The predication \(OK_n(P, F)\) only
-appears in the rule \(\textsc{T-Program}\), therefore only one constraint of
+number of available memory cells and \(F\) represents constan value
+environment. The predication \(OK_n(P, F)\) only appears in the rule
+\(\textsc{T-Program}\), therefore only one constraint of
 \(OK_\nu(\alpha, F)\) is included in the constraints set.
 
 To solve the constraint \(OK_\nu(\alpha, F)\), we used several
