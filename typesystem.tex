@@ -5,7 +5,7 @@
 The syntax of the types is as follows.
 \[
 \begin{array}{rlcl}
-  P & (\mbox{behavioral types})&::=& {\bf 0} \mid P_{1};P_{2} \mid \Free \mid \alpha \mid \mu\alpha.P \\
+  P & (\mbox{behavioral types})&::=& \mathbf{0} \mid P_{1};P_{2} \mid \Free \mid \alpha \mid \mu\alpha.P \\
   &  &  & \mid \LET x = y \; \IN P \mid \LET x = \Malloc \; \IN P \\
    &  &  & \mid \LET x = \NULL \; \IN P \mid \LET x = *y \; \IN P \\
   &  &  & \mid (*x)(P_1,P_2) \mid \scon\Sirx P  \mid \Endconst\\
@@ -18,8 +18,8 @@ The syntax of the types is as follows.
 \]
 
 Behavioral types ranged over by \(P\) express the abstaction of
-behaviors of a program. The type \({\bf 0}\) represents the ‚Äúdoes
-nothing‚Äù behavior; the type \(P_1;P_2\) describes a sequential
+behaviors of a program. The type \(\mathbf{0}\) represents the °»does
+nothing°… behavior; the type \(P_1;P_2\) describes a sequential
 execution of behavioral type \(P_1\) and \(P_2\); The type \(\Malloc\)
 expresses an allocation of a memory cell; the type \(\Free\)
 represents a deallocation of a pointer; the type \(\mu \alpha.P\)
@@ -75,7 +75,7 @@ making action \(\rho\) respectively.
 
 
 \infax[Tr-Skip]
-{ \langle {\bf 0};P, F \rangle \rightarrow \langle P, F \rangle }
+{ \langle \mathbf{0};P, F \rangle \rightarrow \langle P, F \rangle }
 
 %% \begin{minipage}{0.5\textwidth}
 %% \infax[Tr-Malloc]
@@ -86,7 +86,7 @@ making action \(\rho\) respectively.
 
 \begin{minipage}{0.5\textwidth}
 \infax[Tr-Free]
-{ \langle \Free, F \rangle \xlongrightarrow{\Free} \langle {\bf 0}, F \rangle }
+{ \langle \Free, F \rangle \xlongrightarrow{\Free} \langle \mathbf{0}, F \rangle }
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \infax[Tr-Rec]
@@ -127,7 +127,7 @@ making action \(\rho\) respectively.
 
 \infrule[Tr-Endconst]
 {F' = filter\_T(F, *x)}
-{ \langle \Endconst, F \rangle \rightarrow \langle {\bf 0}, F' \rangle }
+{ \langle \Endconst, F \rangle \rightarrow \langle \mathbf{0}, F' \rangle }
 
 %% \infrule[Tr-NNullNotIn]
 %% { \snnull \notin F \andalso \scon\Sirx \in F}
