@@ -1,0 +1,31 @@
+\section{Type Reconstruction}
+\label{sec:reconstruction}
+In this section we proposed a constraint-based type reconstruction
+procedure for the extended type system, which is similiar to the one
+in Kobayashi et al.~\cite{DBLP:journals/lmcs/KobayashiSW06}.  This
+procedure can generate constraints for a given program to be definite
+and well-typed by constructing a derivation tree based on the rules in
+Figure~\ref{fig:TypingRules}. According to this procedure, the
+generated constraint is either a subtyping constraint \(P \le \alpha
+\) or \(\OK_\nu(\alpha, F)\) in which \(\nu\) represents an unknown
+number of available memory cells. The predication \(OK_n(P, F)\) only
+appears in the rule \(\textsc{T-Program}\), therefore only one constraint of
+\(OK_\nu(\alpha, F)\) is included in the constraints set.
+
+To solve the constraint \(OK_\nu(\alpha, F)\), we used several
+definitions proposed by Kobayashi et al.~\cite[Lemma
+  3.8]{DBLP:journals/lmcs/KobayashiSW06} which describe that a
+subtyping constraint \(\alpha \ge P\) can be resolved by setting
+\(\alpha = \mu \alpha. P\).  Therefore, the generated constraints set
+can be reduced to a single constraint \(\OK_{\nu}(P', F)\) for some
+behavioral type \(P'\).
+
+By definition, \(\OK_{\nu}(P, F)\) holds if (1) for any \(\sigma\) and
+\(P'\), if \(\langle P, F \rangle \xlongrightarrow{\sigma} \langle P',
+F'\rangle \), then there exists a natural number \(n\) such that
+\(\sharp_{\Malloc}(\sigma) - \sharp_{\Free}(\sigma) \le n\) and (2)
+\(OK(F)\). To prove this predication, we first fix an upper bound for
+\(\nu\) and encoding \(F\) by hand.  Then, \(\OK_{\nu}(P, F)\) can be
+checked, by using some mode checkers like
+CPAChecker~\cite{beyer2011cpachecker}, in finitely many states.
+

@@ -1,0 +1,30 @@
+\section{Conclusion}
+\label{sec:conclusion}
+In order to deal with path-sensitive problem, which results in an
+imprecise abstraction even such that verification failed even for a
+memory-leak free program, we proposed an extension of the previous
+type system with dependent types.  We also described a type
+reconstruction algorithm for this extended type system, and we
+conducted several experiments to prove whether our idea can deal with
+path-sensitivity problem or not.
+
+Our extended type system can deal with path-sensitivity but only for
+the guard-part of a conditional is a pointer. Therefore verification
+failed on a program where guard-part of a conditional is not a
+pointer. Besides, for simplification our extended type system excludes
+several features of real-world programs. For example, alias pointers
+and variable-sized memory blocks. Encoding the part where a pointer is
+a constant one by hand is unrealistic; Our types ignore the size of
+the allocated block and our system only counts the number of types
+\(\Malloc\) and \(\Free\). Therefore, a program, which contains memory
+leaks by allocating huge memory blocks, may seem to be a well-typed
+one in our type system.  We need to refine our current type system to
+solve these problms.
+
+In order to solve the constraint of form \(\OK_\nu(P, F)\), we fix an
+upper bound for \(\nu\) at first, which makes our reconstruction
+incomplete. For example, a given program consumes at most \(n\)
+numbers of memory cells, but if the \(\nu\) we chose is great than
+\(n\), the verification holds; otherwise, if the \(\nu\) is less than
+\(n\), the verification failed. The reason is that we have not yet
+known whether there exits an \(n\) s.t. \(OK_n(P, F)\).
