@@ -20,4 +20,12 @@ with dependent types.
 The dependent type~\cite{DBLP:conf/popl/XiP99,DBLP:conf/pldi/XiP98}
 takes more precise information than traditional type, and it can
 contain any values in types and appear as arguments and results of
-functions~\cite{DBLP:conf/tldi/Norell09}. By using this 
+functions~\cite{DBLP:conf/tldi/Norell09}. By using this, we can deal
+with the path-sensitive programs, for example, the type
+\(\Sirx(\MALLOC, \SKIP)\);\(\Sirx(\FREE, \SKIP)\) depends on value
+\(\Sirx(*x)\), if \(*x\) is a null pointer, the type is
+\(\SKIP;\SKIP\), otherwise \(\MALLOC;\FREE\).
+
+
+
+
