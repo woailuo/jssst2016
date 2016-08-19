@@ -1,0 +1,347 @@
+\section{Language \(\mathcal{L}\)}\label{sec:language}
+In this section we define an imperative language \(\mathcal{L}\) with
+memory allocation and deallocation primitives, and for simplification
+we only use pointers as values.
+ 
+The syntax of the language \(\mathcal{L}\) is as follows.
+
+\begin{eqnarray*}
+  x,y,z,\dots \mbox{ (variables)} &\in& \VAR\\
+  s \mbox{ (statements)} & ::= &  \SKIP \mid s_{1};s_{2} \mid *x \leftarrow y \mid \Free(x) \\
+  & \mid & \LET x = \MALLOC \IN s \mid \LET x = \NULL\ \IN s  \\
+  & \mid & \LET x = y \; \IN s \mid   \LET x = *y \; \IN s \\
+  & \mid & \IFNULL(*x) \; \THEN s_{1}\; \ELSE s_{2} \mid f(\vec{x})\\
+  & \mid & \scon\Sirx s \mid \Endconst  \\
+  d \mbox{ (proc. defs.)} & ::= & \set{f \mapsto (x_1,\dots,x_n)s}\\
+  D \mbox{ (definitions) } &::=& \langle d_1 \cup \dots \cup d_n \rangle\\
+  P \mbox{ (programs)} &::=& \langle D, s \rangle\\
+  E \mbox{ (context)} &::=& E;s \mid [ ] 
+\end{eqnarray*}
+
+\paragraph{Notation} \(\vec{x}\) is for a finite sequence \(\{x_1,...,x_n\}\),
+where we assume that each element is distinct; \([\vec{x'}/\vec{x}]s\)
+is for a term obtained by replacing each free occurrence of
+\(\vec{x}\) in s with variables \(\vec{x'}\).\\
+
+
+The \(\VAR\) is a countably infinite set of \emph{variables} and each
+variable is a pointer. The statement \(\SKIP\) means "does nothing".
+The statement \(s_1;s_2\) is a sequential execution of \(s_1\) and
+\(s_2\). The statement \(*x \leftarrow y\) changes the content of cell
+which is pointed to by \(x\) with the value \(y\). The statement
+\(\Free(x)\) deallocates a memory cell which is pointed to by pointer
+\(x\). The statement \(\LET x = e\ \IN s\) evaluates the expression
+\(e\), binds \(x\) to the result, and executes \(s\). The expression
+\(\Malloc()\) allocates a new memory cell. The expression \(\NULL\)
+evaluates to the null pointer. The expression \(*y\) means
+dereferencing a memory cell pointed to by \(y\). The statement
+\(\IFNULL(*x) \THEN s_1 \ELSE s_2\) executes \(s_1\) if \(*x\) is
+\(\NULL\) and executes \(s_2\) otherwise. The statement \(f(\vec{x})\)
+expresses a procedure \(f\) with arguments \(\vec{x}\). The statement
+\(\scon\Sirx s\) means \(\Sirx\) is a constant in statement \(s\). The
+statement \(\Endconst\) means from this point \(\Sirx\) maybe not a
+constant.
+
+The \(d\) represents a procedure definition which maps a procedure
+name \(f\) to its procedure body \((\vec{x})s\); The \(D\) represents
+a set of procedure definitions \(\langle d_1 \cup\dots d_n \rangle\),
+and each definition is distinct; The pair \(\langle D, s \rangle \)
+represents a program, where \(D\) is a set of definitions and \(s\) is
+a main statement; the \(E\) represents evaluation context.
+
+\subsection{Operational semantics}
+\label{sec:languageSemantics}
+In this section we introduce operational semantics of language
+\(\mathcal{L}\). We assume there is a countable infinite set
+\(\mathcal{H}\) of \(\emph{heap addresses}\) ranged over by \(l\).
+
+We use a configuration \(\langle H, R, s, n, C \rangle\) to
+express a run-time state. Each elements in the configuration is as
+follows.
+
+\begin{itemize}
+\item \(H\), a \emph{heap}, is a finite mapping from \(\mathcal{H}\)
+  to \(\mathcal{H} \cup \set{\NULL}\);
+\item \(R\), an \emph{environment}, is a finite mapping from \(\VAR\)
+  to \(\mathcal{H} \cup \set{\NULL}\);
+\item \(s\) is the statement that is being executed; 
+\item \(n\) is a natural number that represents the number of memory
+  cells available for allocation, which can be formalized to check
+  memory leaks even for nonterminating programs;
+\item \(C\) is a set related to current constant pointers, which
+  contains \(\scon\Sirx\), \(\snull\) and \(\snnull\).
+\end{itemize}
+
+The operational semantics of the language \(\mathcal{L}\) is given by
+a labeled transition relation \(\langle H, R, s, n, C \rangle
+\xlongrightarrow{\rho}_D \langle H', R', s', n', C' \rangle\). The label
+\(\rho\) is an action, which is as follows.
+\begin{eqnarray*}
+ \rho \mbox{ (label)} &::=& \Malloc(x') \mid \Free \mid \snull \mid \snnull \mid \tau %% \mid \sassx \mid \sassxn
+ %% &&\mid \Startconst \mid \Endconst \mid \tau  \\
+\end{eqnarray*}
+The action \(\Malloc(x')\) expresses an allocation of a new memory
+cell, and the new cell binds to a fresh variable \(x'\); \(\Free\)
+expresses a deallocation of a memory cell; \(\snull\) means \(*x\) is
+a null pointer, and \(\snnull\) not; \(\tau\) expresses the other
+internal actions. For the operational semantics, we often omit
+\(\tau\) in \(\xlongrightarrow{\tau}_D\).  The metavariable \(\sigma\)
+is used for a finite sequence of actions \(\rho_1\dots\rho_n\). The
+\(\xlongrightarrow{\rho_1\dots\rho_n}_D\) is short for
+\(\xlongrightarrow{\rho_1}_D\xlongrightarrow{\rho_2}_D\dots\xlongrightarrow{\rho_n}_D\). The
+\(\xLongrightarrow{\rho}_D\) means
+\(\xlongrightarrow{}_D^*\xlongrightarrow{\rho}_D\xlongrightarrow{}_D^*\).
+We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
+\(\xLongrightarrow{\rho_1}_D\dots\xLongrightarrow{\rho_n}_D\).
+
+\paragraph{Notation} the \(\DOM(f)\) is a
+mapping from function name \(f\) to its domain; for a map \(f\), the
+\(f \set{x \mapsto v}\) and \( f \bs x\) are defined as follows:
+\[
+\begin{array}{rcl}
+f \set{x \mapsto v} (w) &=&
+\left\{
+\begin{array}{ll}
+v & \mbox{if \(x = w\)}\\
+f(w) & \mbox{otherwise.}
+\end{array}
+\right.\\
+(f \bs x)(w) &=&
+\left\{
+\begin{array}{ll}
+\mbox{undefined} & \mbox{if \(x = w\)}\\
+f(w) & \mbox{otherwise.}
+\end{array}
+\right.
+\end{array}
+\]
+and \(filter\_C(C, *x)\) is defined by a pseudcode as follows:
+\[
+\begin{array}{lcl}
+  filter\_C(C, *x) &=& let \; C' = C - \scon\Sirx \; in \\
+  & & if \; \scon\Sirx \in \; C'\; then \; return \; C'\\
+  & & else \; return \; C'\backslash\{\snull,\snnull \}
+\end{array}
+\]
+
+
+Figure~\ref{fig:transitionRules} depicts the relation
+\(\xlongrightarrow{\rho}_D\). Several important rules are listed as
+follows.
+
+\begin{itemize}
+\item \rn{Sem-ConstSeq}: \(\scon\Sirx\) and \(\Endconst\) together
+  guarantees a pointer pointed to by \(*x\) cannot be changed in the
+  statement \(s\). The set \(C\) with the new added \(\scon\Sirx\)
+  describes this status.
+
+\item \rn{Sem-IfNullT} and \rn{Sem-IfConstNullT}: these two rules
+  represents if \(\Sirx\) is a null pointer, the statement \(s_1\)
+  will be executed. the difference of the two is if the \(\scon\Sirx\)
+  is in set \(C\) then\(\snull\) is added to \(C\), which means
+  \(\Sirx\) is a null pointer and cannot be updated from now on;
+  otherwise \(\Sirx\) can be changed, like \rn{Sem-IfNullT}.
+
+\item \rn{Sem-Free}: deallocating one memory cell pointed by \(x\) is
+  to remove linkage of pointer variable \(x\) to heap; this action
+  will release one memory cell space, which increments the number of
+  available memory cells \(n\) by one. 
+
+\item \rn{Sem-Malloc} and \rn{Sem-OutOfMem}: allocating one memory
+  cell is described as updating the heap by adding a fresh heap
+  variable \(l\) to anywhere \(v\) of the heap and adding the linkage
+  of a fresh register variable \(x'\) to that \(l\); This action is
+  allowed only if the number of available memory cells is positive;
+  otherwise \(\OVERFLOW\).
+  
+\item \rn{Sem-AssignExn}, \rn{Sem-FreeExn} and \rn{Sem-DerefExn}: these
+  rules express that accessing a null pointer or a dangling pointer
+  will give raise to an exceptional state \(\MEMEX\).  However, in
+  this paper we do not see the state \(\MEMEX\) is an erroneous state,
+  hence a well-typed program may lead to these states. One thing we
+  should notice the command \(\FREE\), if \(x\) is a null pointer,
+  raises state \(\MEMEX\) in the current semantics, although it is
+  equivalent to \(\SKIP\) in the C language.
+  
+\item \rn{Sem-AssignConstExn}: expressing that if a constant memory
+  cell pointed to by \(x\) or its aliases are changed it will raise
+  exceptional state \(\CONSTEX\).
+
+\end{itemize}
+
+In order to deal with a path-sensitive program to guarantee
+\emph{total} memory-leak freedom, we redefined the several definitions
+as follows.  defined as follows:
+\begin{myDef}[total memory-leak freedom]
+\label{df:ml}
+A program \(\langle D, s \rangle\) is \emph{totally memory-leak free}
+if there is a natural number \(n\) such that it does not require more
+than \(n\) cells.
+\end{myDef}
+\begin{myDef}[Memory leak]
+\label{df:ml}
+A configuration \(\langle H, R, s, n, C \rangle\) \emph{goes overflow} if
+there is \(\sigma\) such that \(\langle H, R, s, n, C \rangle
+\xLongrightarrow{\sigma} \OVERFLOW\).  A program \(\langle D, s
+\rangle\) \emph{consumes at least \(n\) cells} if \(\langle \emptyset,
+\emptyset, s, n, \emptyset \rangle\) goes overflow.  
+\end{myDef}
+
+
+\begin{figure}
+  \begin{minipage}{\textwidth}
+
+ \infrule[Sem-ConstSkip]
+   {C' = filter\_C(C, *x)}
+   {\langle H, R,
+     \Endconst, n, C \rangle \rightarrow_{D} \langle
+     H, R, \SKIP , n, C' \rangle}
+
+\vspace{2mm}
+
+\infax[Sem-ConstSeq]
+{\langle H, R, \scon\Sirx s, n, C \rangle
+\rightarrow_{D}
+\langle H, R, s;\Endconst , n, C \cup \{\scon\Sirx\} \rangle}
+
+\vspace{2mm}  
+
+\infax[Sem-Skip]
+{\langle H, R, \SKIP;s, n, C \rangle
+\longrightarrow_{D}
+\langle H, R, s, n, C \rangle}
+
+\vspace{2mm}
+
+\infrule[Sem-Seq]
+{\langle H, R, s_1, n, C  \rangle \xlongrightarrow{\rho}_{D} \langle H', R', s_1', n', C' \rangle}
+{\langle H, R, s_1;s_2, n, C \rangle \xlongrightarrow{\rho}_{D} \langle H', R', s_1';s_2, n', C' \rangle}
+ 
+\vspace{2mm}
+
+\infrule[Sem-LetNull]
+{x' \notin \DOM(R)}
+{\langle H\coma R\coma  \LET x = \NULL \ \IN s , n, C \rangle
+  \longrightarrow_{D}
+  \langle H\coma R\Lfc x' \mapsto \NULL \Rfc \coma   \Lb x'/x \Rb s , n, C  \rangle }
+
+\vspace{2mm}
+
+\infrule[Sem-LetEq]
+{x' \notin \DOM(R)}
+{\langle H\coma R\coma \LET x = y \; \IN s , n, C  \rangle
+  \longrightarrow_{D}
+  \langle H\coma R\Lfc x' \mapsto R(y) \Rfc \coma   \Lb x'/x \Rb s , n, C\rangle }
+
+\vspace{2mm}
+
+\infrule[Sem-IfNullT]
+{H(R(x)) = \NULL, \scon\Sirx \notin C}
+{\langle H \coma R \coma \IFNULL\Sirx \ \THEN   s_{1}\ \ELSE\  s_{2} \coma  n, C \rangle
+  \xlongrightarrow{\snull}_D
+  \langle H\coma R\coma s_{1} \coma n, C \rangle}
+
+\vspace{2mm}
+
+\infrule[Sem-IfNullF]
+{H(R(x)) \neq \NULL, \scon\Sirx \notin C}
+{\langle H \coma R \coma \IFNULL\Sirx\ \THEN  s_{1}\ \ELSE  s_{2} \coma  n, C\rangle
+  \xlongrightarrow{\snnull}_D
+  \langle H\coma R\coma s_{2} \coma  n, C\rangle}
+
+
+\vspace{2mm}
+
+\infrule[Sem-IfConstNullT]
+{H(R(x)) = \NULL, \scon\Sirx \in C }
+{\langle H \coma R \coma \IFNULL\Sirx \ \THEN   s_{1}\ \ELSE\  s_{2} \coma  n, C \rangle
+  \xlongrightarrow{\snull}_D
+  \langle H\coma R\coma s_{1} \coma n, C\cup \{\snull\} \rangle}
+
+\vspace{2mm}
+
+\infrule[Sem-IfConstNullF]
+{H(R(x)) \neq \NULL, \scon\Sirx \in C }
+{\langle H \coma R \coma \IFNULL\Sirx\ \THEN  s_{1}\ \ELSE  s_{2} \coma  n, C\rangle
+  \xlongrightarrow{\snnull}_D
+  \langle H\coma R\coma s_{2} \coma  n, C\cup \{\snnull\} \rangle}
+
+\vspace{2mm}
+
+\infrule[Sem-Assign]
+{\scon\Sirx \notin C}
+{ \langle H \set{R(x) \mapsto v}, R, *x \leftarrow y , n, C\rangle \xlongrightarrow{}_{D}
+  \langle H \Lfc R(x) \mapsto R(y) \Rfc , R, \SKIP , n, C \rangle }
+
+\vspace{2mm}
+
+\infrule[Sem-LetDeref]
+{x' \notin \DOM(R) \andalso R(y) \in \DOM(H)}
+{\langle H\coma R\coma  \LET x = *y \; \IN s , n, C \rangle
+  \longrightarrow_{D}
+  \langle H\coma R\Lfc x' \mapsto H(R(y)) \Rfc \coma   \Lb x'/x \Rb s , n, C\rangle }
+
+\vspace{2mm}
+
+\infrule[Sem-Free]
+{R(x) \neq \NULL \mbox{ and } R(x) \in \DOM(H)}
+{\langle H\set{R(x) \mapsto v}\coma R\coma \Free(x) , n, C \rangle \xlongrightarrow{\Free}_{D}
+  \langle H\backslash R(x) \coma R \coma \SKIP , n+1, C \rangle}
+
+\vspace{2mm}
+
+\infrule[Sem-Malloc]
+{l \notin \DOM(H) \andalso n > 0}
+{\langle H\coma R\coma  \LET x = \Malloc() \; \IN s , n, C\rangle
+  \xlongrightarrow{\Malloc{(x')}}_{D}
+  \langle H \Lfc l \mapsto v\Rfc \coma R\Lfc x' \mapsto l \Rfc \coma   \Lb x'/x \Rb s , n-1, C  \rangle }
+
+\vspace{2mm}
+\begin{minipage}{0.5\textwidth}
+\infrule[Sem-Call]
+{D(f) = (\vec{y})s}
+{ \langle H\coma R\coma  f(\vec{x}) , n, C\rangle
+  \longrightarrow_{D}
+  \langle H\coma R\coma  \Lb \vec{x}/\vec{y} \Rb s , n, C \rangle}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\infrule[Sem-FreeExn]
+{R(x) = \NULL \mbox{ or } R(x) \notin \DOM(H)}
+{\langle H\coma R\coma \Free(x) , n, C\rangle \xlongrightarrow{\Free}_{D} \MEMEX}
+\end{minipage}
+\vspace{2mm}
+
+\begin{minipage}{0.5\textwidth}
+\infrule[Sem-AssignExn]
+{R(x) = \NULL \mbox{ or } R(x) \notin \DOM(H)}
+{\langle H\coma R\coma  *x \leftarrow y , n, C\rangle
+  \longrightarrow_{D} \MEMEX }
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\infrule[Sem-DerefExn]
+{R(y) = \NULL \mbox{ or } R(y) \notin \DOM(H)}
+{\langle H\coma R\coma  \LET x = *y \; \IN s, n, C\rangle
+    \longrightarrow_{D} \MEMEX}
+\end{minipage}
+\vspace{2mm}
+
+\infrule[Sem-AssignConstExn]
+{ \forall z.\scon(*z) \in C \mbox{ and } R(x) = R(z)}
+{ \langle H \set{R(x) \mapsto v}, R, *x \leftarrow y , n, C\rangle \xlongrightarrow{}_{D}
+  \CONSTEX}
+
+%% \infrule[Sem-ConstExn]
+%%         { H(R(x)) \neq H'(R'(x))
+%%           \Rtab
+%%           \langle H, R, s, n, C \rangle \xlongrightarrow{\rho}_{D} \langle H', R', s', n', C \rangle}
+%% {\langle H, R, \scon\Sirx s, n, C \rangle \xlongrightarrow{\rho}_{D} \CONSTEX }
+
+\infax[Sem-OutOfMem]
+{ \langle H\coma R\coma \LET x = \Malloc() \ \IN s ,  0, C  \rangle    \xlongrightarrow{\Malloc{(x')}}_{D}
+  \OVERFLOW}
+
+\end{minipage}
+
+\caption{Operational semantics of \(\mathcal{L}\).}
+\label{fig:transitionRules}
+\end{figure}
