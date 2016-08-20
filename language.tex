@@ -295,13 +295,15 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 \end{figure*}
 
 The relation $\xlongrightarrow{\rho}_D$ is the least relation that
-satisfies the rules in Figure~\ref{fig:transitionRules}.  The semantics,
-except for the multiset of facts $C$, is almost the same as the previous
-framework~\cite{}.  Important invariants of a configuration is that (1)
-if $C$ contains $\scon(*x)$, then the value of the expression $*x$ is
-not changed in the next step and (2) if $C$ contains $\snull$ (resp.,
-$\snnull$), then the value of $*x$ is equal to $\NULL$ (resp., not equal
-to null).
+satisfies the rules in Figure~\ref{fig:transitionRules}.  In these
+rules, $E$ is a \emph{context} defined by $E ::= E;s \mid []$.
+
+The operational semantics is, except for the multiset of facts $C$,
+almost the same as the previous framework~\cite{}.  Important invariants
+of a configuration is that (1) if $C$ contains $\scon(*x)$, then the
+value of the expression $*x$ is not changed in the next step and (2) if
+$C$ contains $\snull$ (resp., $\snnull$), then the value of $*x$ is
+equal to $\NULL$ (resp., not equal to null).
 
 In order to manipulate the $C$ part of a configuration, we use a
 function $\FILTER(C, *x)$ in the rules for the operational semantics
@@ -346,53 +348,40 @@ constantness annotations; for the other rules, see~\cite{}.
       this rule removes one $\mathbf{endconst}(*x)$ from $C$ and
       conducts ``garbage collection'' of the facts related to $*x$ if
       necessary.
-% \item \rn{Sem-Free}: deallocating one memory cell pointed by \(x\) is
-%   to remove linkage of pointer variable \(x\) to heap; this action
-%   will release one memory cell space, which increments the number of
-%   available memory cells \(n\) by one. 
-% \item \rn{Sem-Malloc} and \rn{Sem-OutOfMem}: allocating one memory
-%   cell is described as updating the heap by adding a fresh heap
-%   variable \(l\) to anywhere \(v\) of the heap and adding the linkage
-%   of a fresh register variable \(x'\) to that \(l\); This action is
-%   allowed only if the number of available memory cells is positive;
-%   otherwise \(\OVERFLOW\).
-% \item \rn{Sem-AssignExn}, \rn{Sem-FreeExn} and \rn{Sem-DerefExn}: these
-%   rules express that accessing a null pointer or a dangling pointer
-%   will give raise to an exceptional state \(\MEMEX\).  However, in
-%   this paper we do not see the state \(\MEMEX\) is an erroneous state,
-%   hence a well-typed program may lead to these states. One thing we
-%   should notice the command \(\FREE\), if \(x\) is a null pointer,
-%   raises state \(\MEMEX\) in the current semantics, although it is
-%   equivalent to \(\SKIP\) in the C language.
-% \item \rn{Sem-AssignConstExn}: expressing that if a constant memory
-%   cell pointed to by \(x\) or its aliases are changed it will raise
-%   exceptional state \(\CONSTEX\).
-
-% E \mbox{ (context)} &::=& E;s \mid [ ] 
-
-% \(E\) represents evaluation context.
-
+\item \textsc{Sem-Malloc} and \textsc{Sem-OutOfMem}: $\Malloc$ allocates
+      a new memory cell by extending the heap $H$ and decreasing the
+      value of $n$ by $1$.  If there is no available cell (i.e., $n =
+      0$), then $\Malloc$ raises $\OVERFLOW$ exception.
+\item \textsc{Sem-Free}: $\Free(x)$ removes the entry for $R(x)$ from
+      the heap $H$ and increase the value of $n$ by $1$.
+\item \textsc{Sem-AssignExn}, \textsc{Sem-FreeExn} and
+      \textsc{Sem-DerefExn}: If a program tries to access to a
+      deallocated memory cell, then the exception $\MEMEX$ is raised.
 \end{itemize}
 
-FROM HERE.  FROM HERE.  FROM HERE.  FROM HERE.  FROM HERE.  FROM HERE.
-FROM HERE.  FROM HERE.
+\begin{myDef}
+\label{df:ml} A program $\langle D, s \rangle$ is said to \emph{execute
+within $n$ memory cells} if $\langle \emptyset, \emptyset, s, n,
+\emptyset\rangle \not\xlongrightarrow{}_D^* \MEMEX$.
+\end{myDef}
 
-In order to deal with a path-sensitive program to guarantee
-\emph{total} memory-leak freedom, we redefined the several definitions
-as follows.  defined as follows:
-\begin{myDef}[total memory-leak freedom]
-\label{df:ml}
-A program \(\langle D, s \rangle\) is \emph{totally memory-leak free}
-if there is a natural number \(n\) such that it does not require more
-than \(n\) cells.
-\end{myDef}
-\begin{myDef}[Memory leak]
-\label{df:ml}
-A configuration \(\langle H, R, s, n, C \rangle\) \emph{goes overflow} if
-there is \(\sigma\) such that \(\langle H, R, s, n, C \rangle
-\xLongrightarrow{\sigma} \OVERFLOW\).  A program \(\langle D, s
-\rangle\) \emph{consumes at least \(n\) cells} if \(\langle \emptyset,
-\emptyset, s, n, \emptyset \rangle\) goes overflow.  
-\end{myDef}
+
+% In order to deal with a path-sensitive program to guarantee
+% \emph{total} memory-leak freedom, we redefined the several definitions
+% as follows.  defined as follows:
+% \begin{myDef}[total memory-leak freedom]
+% \label{df:ml}
+% A program \(\langle D, s \rangle\) is \emph{totally memory-leak free}
+% if there is a natural number \(n\) such that it does not require more
+% than \(n\) cells.
+% \end{myDef}
+% \begin{myDef}[Memory leak]
+% \label{df:ml}
+% A configuration \(\langle H, R, s, n, C \rangle\) \emph{goes overflow} if
+% there is \(\sigma\) such that \(\langle H, R, s, n, C \rangle
+% \xLongrightarrow{\sigma} \OVERFLOW\).  A program \(\langle D, s
+% \rangle\) \emph{consumes at least \(n\) cells} if \(\langle \emptyset,
+% \emptyset, s, n, \emptyset \rangle\) goes overflow.  
+% \end{myDef}
 
 
