@@ -2,35 +2,46 @@
 \label{sec:typesystem}
 
 \subsection{Types}
-The syntax of the types is as follows.
+
+\begin{figure*}
 \[
 \begin{array}{rlcl}
   P & (\mbox{behavioral types})&::=& \mathbf{0} \mid P_{1};P_{2} \mid \Free \mid \alpha \mid \mu\alpha.P \\
-  &  &  & \mid \LET x = y \; \IN P \mid \LET x = \Malloc \; \IN P \\
-   &  &  & \mid \LET x = \NULL \; \IN P \mid \LET x = *y \; \IN P \\
-  &  &  & \mid (*x)(P_1,P_2) \mid \scon\Sirx P  \mid \Endconst\\
+  &  &  & \mid \LET x = \Malloc \; \IN P \\
+  &  &  & \mid (e)(P_1,P_2) \mid P_1 + P_2 \mid \scon\Sirx P  \mid \Endconst\\
   \Gamma & (\mbox{variable type environment}) &::=& \set{x_1, x_2, \dots, x_n}\\
-  \Psi & (\mbox{dependent function type}) &::=& (\vec{x})P\\
+  e & (\mbox{static expressions}) &::=& x \mid *e\\
+  c & (\mbox{static facts}) &::=& \NULL(e) \mid \neg\NULL(e) \mid \scon(e)\\
+  C & & ::= & \set{c_1,\dots,c_n}\\
+  \Psi & (\mbox{dependent function type}) &::=& (\vec{x}; C_1; C_2)P\\
   \Theta & (\mbox{function type environment}) &::=& \set{f_1\COL \Psi_1,\dots,f_n\COL \Psi_n}\\
-  k & (\mbox{constant values}) &::=& \snull \mid \snnull \mid \scon\Sirx   \\
+  % k & (\mbox{constant values}) &::=& \snull \mid \snnull \mid \scon\Sirx   \\
   F & (\mbox{constant value environment}) &::=& \{k_1,...,k_n\} \\
 \end{array}
 \]
+\caption{Syntax of types.} 
+\label{fig:typeSyntax}
+\end{figure*}
 
-Behavioral types ranged over by \(P\) express the abstaction of
-behaviors of a program. The type \(\mathbf{0}\) represents the ¡Èdoes
-nothing¡É behavior; the type \(P_1;P_2\) describes a sequential
-execution of behavioral type \(P_1\) and \(P_2\); The type \(\Malloc\)
-expresses an allocation of a memory cell; the type \(\Free\)
-represents a deallocation of a pointer; the type \(\mu \alpha.P\)
-represents a recursive substitution of \(\alpha\) in \(P\) ; the type
-\(\Sirx(P_1,P_2)\) represents that \(P_1\) or \(P_2\) is obtained
-dependent on \(*x\), e.g., \(P_1\) is obtained if \(*x\) is not a null
-pointer, otherwise \(P_2\); the type \(P_1 + P_2\) represents the
-choice between \(P_1\) and \(P_2\); the \(\alpha\) is a type variable;
-the type \(\scon\Sirx P\) represents that \(*x\) is a constant value
-in type \(P\) ; the type \(\Endconst\) represents \(*x\) no longer be
-a constant from this point.
+Figure~\ref{fig:typeSyntax} defines the syntax of types. 
+
+FROM HERE.
+
+The syntax of the types is as follows.
+  Behavioral types ranged over by
+\(P\) express the abstaction of behaviors of a program. The type
+\(\mathbf{0}\) represents the ¡Èdoes nothing¡É behavior; the type
+\(P_1;P_2\) describes a sequential execution of behavioral type \(P_1\)
+and \(P_2\); The type \(\Malloc\) expresses an allocation of a memory
+cell; the type \(\Free\) represents a deallocation of a pointer; the
+type \(\mu \alpha.P\) represents a recursive substitution of \(\alpha\)
+in \(P\) ; the type \(\Sirx(P_1,P_2)\) represents that \(P_1\) or
+\(P_2\) is obtained dependent on \(*x\), e.g., \(P_1\) is obtained if
+\(*x\) is not a null pointer, otherwise \(P_2\); the type \(P_1 + P_2\)
+represents the choice between \(P_1\) and \(P_2\); the \(\alpha\) is a
+type variable; the type \(\scon\Sirx P\) represents that \(*x\) is a
+constant value in type \(P\) ; the type \(\Endconst\) represents \(*x\)
+no longer be a constant from this point.
 
 A type environments for variables ranged over by \(\Gamma\) is a set
 of variables without information about their types, because our
@@ -70,7 +81,7 @@ system. The relation \( \langle P, F \rangle \xlongrightarrow{\rho}
 making action \(\rho\) respectively.
 
 
-\begin{figure}
+\begin{figure*}
  \begin{minipage}{\textwidth}
 
 
@@ -184,7 +195,7 @@ making action \(\rho\) respectively.
 \end{minipage}
 \caption{semantics of behavioral types with dependent types.}
 \label{fig:bdRules}
-\end{figure}
+\end{figure*}
 
 \subsection{Typing rules}
 The type judgment for statements is of the form \(\Theta; \Gamma
@@ -237,94 +248,103 @@ of memory cells the program requires.
 \label{df:subtype}
 \end{myDef}
 
-\begin{figure}
-\begin{minipage}{\textwidth}
+\begin{figure*}
+\small
 
 \begin{minipage}{0.5\textwidth}
 \infax[T-Skip]
-{\Theta ; \Gamma \vdash \SKIP : \mathbf{0}}
+{\Theta ; \Gamma ; C \vdash \SKIP : \mathbf{0}; C}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \infrule[T-Seq]
-{\Theta ; \Gamma \vdash s_{1} : P_{1} \Rtab \Theta ; \Gamma \vdash s_{2} : P_{2}}
-{\Theta ; \Gamma \vdash s_{1} ; s_{2} : P_{1};P_{2} }
+{\Theta ; \Gamma ; C_1 \vdash s_{1} : P_{1}; C_2 \andalso \Theta ; \Gamma ; C_2 \vdash s_{2} : P_{2}; C_3}
+{\Theta ; \Gamma ; C_1 \vdash s_{1} ; s_{2} : P_{1};P_{2} ; C_3}
 \end{minipage}
 
-\vspace{2mm}
+
 
 \begin{minipage}{0.5\textwidth}
 \infax[T-Assign]
-{\Theta ; \Gamma, x, y \vdash *x \leftarrow y : \mathbf{0} }
+{\Theta ; \Gamma, x, y ; C \vdash *x \leftarrow y : \mathbf{0}; C}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \infax[T-Free]
-{\Theta ; \Gamma, x \vdash \Free(x) : \Free}
+{\Theta ; \Gamma, x ; C \vdash \Free(x) : \Free; C}
 \end{minipage}
 
-\vspace{2mm}
 
-\begin{minipage}{0.5\textwidth}
+
 \infrule[T-Malloc]
-{\Theta ; \Gamma,x \vdash s : P  \Rtab}
-{\Theta ; \Gamma \vdash \LET x = \MALLOC \; \IN s :\LET x = \Malloc \; \IN P}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
+{\Theta ; \Gamma,x ; C_1 \vdash s : P; C_2}
+{\Theta ; \Gamma ; \FILTER(C_1,x) \vdash \LET x = \MALLOC\  \IN s :\LET x = \Malloc\ \IN P; \FILTER(C_2,x)}
+
 \infrule[T-LetEq]
-{\Theta ; \Gamma , x, y  \vdash s : P}
-{\Theta ; \Gamma, y \vdash \LET x = y \; \IN s : \LET x = y \; \IN P}
-\end{minipage}
+{\Theta ; \Gamma , x, y ; C_1 \vdash s : P; C_2}
+{\Theta ; \Gamma, y ; [y/x]C_1 \vdash \LET x = y \; \IN s : [y/x]P; [y/x]C_2}
 
-\vspace{2mm}
 
-\begin{minipage}{0.5\textwidth}
-\infrule[T-LetDeref]
-{\Theta ; \Gamma , x, y  \vdash s : P  \Rtab}
-{\Theta ; \Gamma, y \vdash \LET x = *y \; \IN s : \LET x = *y \; \IN P}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
+
+\infrule[T-LetDeref1]
+{\scon(*y) \in C_1 \andalso \NULL(*y) \in C_1 \andalso \Theta ; \Gamma , x,y; C_1  \vdash s : P; C_2}
+{\Theta ; \Gamma, y ; \FILTER(C_1, x) \vdash \LET x = *y \; \IN s : P'; \FILTER(C_2,x)}
+
+\infrule[T-LetDeref2]
+{\scon(*y) \in C_1 \andalso \NULL(*y) \notin C_1 \andalso \Theta ; \Gamma , x, y ; C_1 \vdash s : P; C_2}
+{\Theta ; \Gamma, y ; [*y/x]C_1 \vdash \LET x = *y \; \IN s : [*y/x]P; [*y/x]C_2}
+
+\infrule[T-LetDeref3]
+{\scon(*y) \notin C \andalso \Theta ; \Gamma , x,y; C_1  \vdash s : P; C_2}
+{\Theta ; \Gamma, y ; \FILTER(C_1, x) \vdash \LET x = *y \; \IN s : P \uparrow x; \FILTER(C_2,x)}
+
 \infrule[T-LetNull]
-{\Theta ; \Gamma, x  \vdash s : P  \Rtab}
-{\Theta ; \Gamma \vdash \LET x = \NULL \; \IN s : \LET x = \NULL \; \IN P}
-\end{minipage}
-
-\infax[T-Endconst] 
-{\Theta ; \Gamma,x \vdash \Endconst : \Endconst}
+{\Theta ; \Gamma, x; C \cup \set{\NULL(x)} \vdash s : P; C_2}
+{\Theta ; \Gamma ; \FILTER(C,x) \vdash \LET x = \NULL \IN s : [\NULL/x]P; \FILTER(C_2,x)}
 
 \infrule[T-Const] 
-{\Theta ; \Gamma, x \vdash s : P }
-{\Theta ; \Gamma,x \vdash \scon\Sirx s : \scon\Sirx P}
+{\Theta ; \Gamma, x ; C_1 + \set{\scon(*x)} \vdash s : P; C_2}
+{\Theta ; \Gamma,x ; C_1 \vdash \scon(*x) s : \scon(*x) P; C_2}
 
+\infax[T-Endconst] 
+{\Theta ; \Gamma,x ; C \vdash \Endconst : \Endconst; C - \set{\scon(*x)}}
 
-%%\begin{minipage}{0.5\textwidth}  \andalso x \in \mathbf{FV}(P_1) \cup \mathbf{FV}(P_2)
-\infrule[T-IfNull] 
-{\Theta ; \Gamma, x \vdash s_{1} : P_1 \andalso \Theta ; \Gamma, x \vdash s_{2} : P_2}
-{\Theta ; \Gamma, x \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : (*x)(P_1,P_2)}
-%%\end{minipage}
-%%\begin{minipage}{0.5\textwidth}
-\infax[T-Call] {\Theta, f \COL (\vec{y})P; \Gamma, \vec{x} \vdash f(\vec{x}) :  P[\vec{x}/\vec{y}]}
-%%\end{minipage}
+\infrule[T-IfNull1]
+{\scon(*x),\NULL(*x) \in C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{1} : P_1; C_2}
+{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : P_1; C_2}
+\infrule[T-IfNull2]
+{\scon(*x),\neg\NULL(*x) \in C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{2} : P_2; C_2}
+{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : P_2; C_2}
+\infrule[T-IfNull3]
+{\scon(*x) \in C_1 \andalso \NULL(*x),\neg\NULL(*x) \notin C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{1} : P_1; C_2 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{2} : P_2; C_2}
+{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : (*x)(P_1,P_2); C_2}
+\infrule[T-IfNull4]
+{\scon(*x) \notin C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{1} : P_1; C_2 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{2} : P_2; C_2}
+{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : P_1+P_2; C_2}
 
-%%\vspace{2mm} 
+\infax[T-Call] {\Theta, f \COL (\vec{x}; C_1; C_2)P; \Gamma, \vec{y}; [\vec{y}/\vec{x}]C_1 \vdash f(\vec{y}) :  [\vec{y}/\vec{x}]P; [\vec{y}/\vec{x}]C_2}
 
 \infrule[T-Sub]
-{\Theta ; \Gamma \vdash s : P_{1} \andalso P_{1} \le P_{2}}
-{\Theta ; \Gamma \vdash s : P_{2}}
+{\Theta ; \Gamma ; C_1' \vdash s : P_{1}; C_2' \andalso P_{1} \le P_{2} \andalso C_1 \supseteq C_1' \andalso C_2' \supseteq C_2}
+{\Theta ; \Gamma ; C_1 \vdash s : P_{2}; C_2}
+\caption{Typing rules for statements.}
+\label{fig:typingStmt}
+\end{figure*}
+
+\begin{figure*}
 
 \infrule[T-Def]
-        { \Theta(f) = (\vec{x})P \andalso \DOM(D) = \DOM(\Theta)
-          \andalso \Theta; x_1,\dots,x_n \vdash s \COL P
+        { \Theta(f) = (\vec{x}; C_1; C_2)P \andalso \DOM(D) = \DOM(\Theta)
+          \andalso \Theta; x_1,\dots,x_n; C_1 \vdash s \COL P; C_2
           \mbox{ for each \(f \mapsto (x_1,\dots,x_n)s \in D\)}
         }
         {\vdash D \COL \Theta}
 % Program
 \infrule[T-Program]
-{\vdash D : \Theta \andalso \Theta; \emptyset\vdash s : P \Rtab OK_{n}(P, F)}
+{\vdash D : \Theta \andalso \Theta; \emptyset; \emptyset \vdash s : P; C \andalso OK_{n}(P, F)}
 {\vdash \langle D, s \rangle : n}
 
-\end{minipage}
-\caption{typing rules}
-\label{fig:TypingRules}
-\end{figure}
+\caption{Typing rules for procedure definitions and programs.}
+\label{fig:typingDefs}
+\end{figure*}
 
 Figure~\ref{fig:TypingRules} shows the typing rules. For example, the
 rule \rn{T-IfNull} represents the behavior of \(\IFNULL\Sirx \; \THEN
