@@ -106,12 +106,18 @@ is expressed by another constructor of a behavioral type introduced
 later, we can conclude that the behavior of \verb|h2| is $(\Malloc;
 \Free) + \TSKIP$.
 
-Concretely, we define the syntax and the semantics of the behavioral
-types extended with path-sensitive ones, extend the typing rules, and
-prove the soundness of the extended type system.  We also describe how
-to conduct type reconstruction for our type system.  We expect that this
-algorithm leads to a behavioral analyzer for a programming language with
-manual memory management primitives.
+In this paper, we define the syntax and the semantics of the behavioral
+types extended with path-sensitive ones, extend the typing rules.  We
+also discuss how the type inferred by the type system can be used to
+estimate an upper bound of a program.  Although the soundness of the
+type system is still a conjecture, we expect our extension is an
+important steppingstone for behavior analysis of a program with manual
+memory management.
+
+% We also describe how
+% to conduct type reconstruction for our type system.  We expect that this
+% algorithm leads to a behavioral analyzer for a programming language with
+% manual memory management primitives.
 
 % \begin{exmp}\label{ex:ex1}
 
@@ -197,7 +203,7 @@ with allocation and deallocation primitives and its operational
 semantics. Section~\ref{sec:typesystem} introduces the extended
 behavioral type system with path-sensitive behavioral
 types. Section~\ref{sec:reconstruction} describes the type
-reconstruction procedure.  
+reconstruction procedure.
 % Section~\ref{sec:experiments} shows some
 % experiments and give a discussion;
 Section~\ref{sec:relatedwork} discusses the related work.
