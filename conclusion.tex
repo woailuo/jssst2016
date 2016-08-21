@@ -1,30 +1,55 @@
 \section{Conclusion}
 \label{sec:conclusion}
-In order to deal with path-sensitive problem, which results in an
-imprecise abstraction even such that verification failed even for a
-memory-leak free program, we proposed an extension of the previous
-type system with dependent types.  We also described a type
-reconstruction algorithm for this extended type system, and we
-conducted several experiments to prove whether our idea can deal with
-path-sensitivity problem or not.
 
-Our extended type system can deal with path-sensitivity but only for
-the guard-part of a conditional is a pointer. Therefore verification
-failed on a program where guard-part of a conditional is not a
-pointer. Besides, for simplification our extended type system excludes
-several features of real-world programs. For example, alias pointers
-and variable-sized memory blocks. Encoding the part where a pointer is
-a constant one by hand is unrealistic; Our types ignore the size of
-the allocated block and our system only counts the number of types
-\(\Malloc\) and \(\Free\). Therefore, a program, which contains memory
-leaks by allocating huge memory blocks, may seem to be a well-typed
-one in our type system.  We need to refine our current type system to
-solve these problms.
+We presented a path-sensitive behavioral type system for an imperative
+language with manual memory management.  Our type system abstracts the
+behavior of a program concerning the primitives $\Malloc$ and $\Free$
+for manual memory management.  We stated several conjectures about the
+type system.  We also described how the inferred behavioral types can be
+used for estimating an upper bound of memory consumption.
 
-In order to solve the constraint of form \(\OK_\nu(P, F)\), we fix an
-upper bound for \(\nu\) at first, which makes our reconstruction
-incomplete. For example, a given program consumes at most \(n\)
-numbers of memory cells, but if the \(\nu\) we chose is great than
-\(n\), the verification holds; otherwise, if the \(\nu\) is less than
-\(n\), the verification failed. The reason is that we have not yet
-known whether there exits an \(n\) s.t. \(OK_n(P, F)\).
+We are currently designing and implementing a type inference algorithm
+for our type system.  We can infer a type of a program using essentially
+the same algorithm as that of Kobayashi et
+al.~\cite{DBLP:journals/lmcs/KobayashiSW06}.  We need to check the
+feasibility of our type system using practical programs.
+
+The current type system requires a programmer to write constantness
+annotation $\scon(*x)$.  The correctness of these annotations are
+currently the responsibility of the programmer: If the annotation is
+wrong, then the type system does not guarantee anything.  We suppose
+that we can verify the correctness of these annotations using our
+previous work on \emph{fractional
+ownerships}~\cite{DBLP:conf/aplas/SuenagaK09}.  We also expect that we
+can automatically insert constantness annotations using the type
+inference algorithm of our previous work.
+
+
+% In order to deal with path-sensitive problem, which results in an
+% imprecise abstraction even such that verification failed even for a
+% memory-leak free program, we proposed an extension of the previous
+% type system with dependent types.  We also described a type
+% reconstruction algorithm for this extended type system, and we
+% conducted several experiments to prove whether our idea can deal with
+% path-sensitivity problem or not.
+
+% Our extended type system can deal with path-sensitivity but only for
+% the guard-part of a conditional is a pointer. Therefore verification
+% failed on a program where guard-part of a conditional is not a
+% pointer. Besides, for simplification our extended type system excludes
+% several features of real-world programs. For example, alias pointers
+% and variable-sized memory blocks. Encoding the part where a pointer is
+% a constant one by hand is unrealistic; Our types ignore the size of
+% the allocated block and our system only counts the number of types
+% \(\Malloc\) and \(\Free\). Therefore, a program, which contains memory
+% leaks by allocating huge memory blocks, may seem to be a well-typed
+% one in our type system.  We need to refine our current type system to
+% solve these problms.
+
+% In order to solve the constraint of form \(\OK_\nu(P, F)\), we fix an
+% upper bound for \(\nu\) at first, which makes our reconstruction
+% incomplete. For example, a given program consumes at most \(n\)
+% numbers of memory cells, but if the \(\nu\) we chose is great than
+% \(n\), the verification holds; otherwise, if the \(\nu\) is less than
+% \(n\), the verification failed. The reason is that we have not yet
+% known whether there exits an \(n\) s.t. \(OK_n(P, F)\).
