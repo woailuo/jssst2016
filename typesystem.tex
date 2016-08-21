@@ -1,84 +1,123 @@
 \section{Type system}
 \label{sec:typesystem}
 
-\subsection{Types}
-
 \begin{figure*}
 \[
 \begin{array}{rlcl}
-  P & (\mbox{behavioral types})&::=& \mathbf{0} \mid P_{1};P_{2} \mid \Free \mid \alpha \mid \mu\alpha.P \\
-  &  &  & \mid \LET x = \Malloc \; \IN P \\
-  &  &  & \mid (e)(P_1,P_2) \mid P_1 + P_2 \mid \scon\Sirx P  \mid \Endconst\\
+  P & (\mbox{behavioral types})&::=& \mathbf{0} \mid P_{1};P_{2} \mid \Malloc \mid \Free \mid (x)P \mid (*x)(P_1,P_2) \mid \scon\Sirx P  \mid \Endconst\\
+  &  &  & \mid \alpha \mid \mu\alpha.P\\
   \Gamma & (\mbox{variable type environment}) &::=& \set{x_1, x_2, \dots, x_n}\\
-  e & (\mbox{static expressions}) &::=& x \mid *e\\
-  c & (\mbox{static facts}) &::=& \NULL(e) \mid \neg\NULL(e) \mid \scon(e)\\
-  C & & ::= & \set{c_1,\dots,c_n}\\
-  \Psi & (\mbox{dependent function type}) &::=& (\vec{x}; C_1; C_2)P\\
+  \Psi & (\mbox{dependent function type}) &::=& (\vec{x})P\\
   \Theta & (\mbox{function type environment}) &::=& \set{f_1\COL \Psi_1,\dots,f_n\COL \Psi_n}\\
-  % k & (\mbox{constant values}) &::=& \snull \mid \snnull \mid \scon\Sirx   \\
-  F & (\mbox{constant value environment}) &::=& \{k_1,...,k_n\} \\
+  % k & (\mbox{facts}) &::=& \snull \mid \snnull \mid \scon\Sirx   \\
+  % F & (\mbox{fact sets}) &::=& \{k_1,...,k_n\} \\
 \end{array}
 \]
 \caption{Syntax of types.} 
 \label{fig:typeSyntax}
 \end{figure*}
 
-Figure~\ref{fig:typeSyntax} defines the syntax of types. 
+\subsection{Types}
 
-FROM HERE.
+Figure~\ref{fig:typeSyntax} defines the syntax of \emph{types}.
+Behavioral types, ranged over by \(P\), specify the behavior of
+statements.  The type $\mathbf{0}$ represents the do-nothing behavior.
+The type $P_1;P_2$ is the sequential composition of $P_1$ and $P_2$.
+The types $\Malloc$ and $\Free$ represents one allocation and one
+deallocation, respectively.  The type $(x)P$ is the behavior that binds
+a variable $x$ and behaves as specified by $P$; the type $P$ may be
+dependent to $x$.  For example, the behavior of the statement $\LET\ x =
+y\ \IN\ \SKIP$ is represented by $(x)\mathbf{0}$ since it binds the
+variable $x$ and does nothing. The type $(*x)(P_1,P_2)$ is the behavior
+of a branching statement.  This type represents the behavior $P_1$ if
+$*x$ is null; $P_2$ otherwise.  The type represents the behavior of a
+statement that works as specified in $P$ under the assumption that the
+value of $*x$ does not change.  The type $\Endconst$ represents the
+behavior that marks the end of the constantness annotation.  The types
+$\alpha$ and $\mu\alpha.P$ allows to specify a recursive behavior.  The
+type $\mu\alpha.P$ represents the behavior $P$, in which $\alpha$
+represents the behavior of $\mu\alpha.P$ itself.  For example,
+$\mu\alpha.(\Malloc;\Free;\alpha)$ represents a statement that repeats
+an allocation followed by a deallocation forever.  $\Gamma$, a
+\emph{type environment}, is a set of variables representing the set of
+free variables that may appear in a statement.
 
-The syntax of the types is as follows.
-  Behavioral types ranged over by
-\(P\) express the abstaction of behaviors of a program. The type
-\(\mathbf{0}\) represents the ¡Èdoes nothing¡É behavior; the type
-\(P_1;P_2\) describes a sequential execution of behavioral type \(P_1\)
-and \(P_2\); The type \(\Malloc\) expresses an allocation of a memory
-cell; the type \(\Free\) represents a deallocation of a pointer; the
-type \(\mu \alpha.P\) represents a recursive substitution of \(\alpha\)
-in \(P\) ; the type \(\Sirx(P_1,P_2)\) represents that \(P_1\) or
-\(P_2\) is obtained dependent on \(*x\), e.g., \(P_1\) is obtained if
-\(*x\) is not a null pointer, otherwise \(P_2\); the type \(P_1 + P_2\)
-represents the choice between \(P_1\) and \(P_2\); the \(\alpha\) is a
-type variable; the type \(\scon\Sirx P\) represents that \(*x\) is a
-constant value in type \(P\) ; the type \(\Endconst\) represents \(*x\)
-no longer be a constant from this point.
+The types for procedures, ranged over by $\Psi$, is of the form
+$(\vec{x})P$.  This type represents a procedure that takes $\vec{x}$ as
+arguments and behaves as specified by $P$, which may be dependent to
+$\vec{x}$.  Procedure type environments, ranged over by $\Theta$,
+assigns a procedure type to a function name.
 
-A type environments for variables ranged over by \(\Gamma\) is a set
-of variables without information about their types, because our
-focus is the behavior of a program.
+% \(k\) represents constant values information, where \(\snull\) represents
+% \(\Sirx\) is a null pointer; \(\snnull\) represents \(\Sirx\) is not a
+% null pointer; \(\scon\Sirx\) represents \(\Sirx\) should be a constant.
 
-Dependent function types ranged over by \(\Psi\) represents the
-behavior of a function. \(\vec{x}\) is the formal arguments of the
-function, and the behavioral type \(P\) obtained dependent on
-\(\vec{x}\).
+% Constant value environment ranged over by \(F\) is a set of constant
+% values information.
 
-Function types ranged over by \(\Theta\) is a mapping from function names to dependent function types.
+% \paragraph{Notation}
+% \(filter\_T(F, *x)\) is defined by a pseudcode as follows:
+% \[
+% \begin{array}{lcl}
+%   filter\_T(F, *x) &=& let \; F' = F - \scon\Sirx \; in \\
+%   & & if \; \scon\Sirx \notin \; F'\; then \; return \; (F' \backslash \{\snull,\snnull\})\\
+%   & & else \; return \; F'
+% \end{array}
+% \]
 
-\(k\) represents constant values information, where \(\snull\) represents
-\(\Sirx\) is a null pointer; \(\snnull\) represents \(\Sirx\) is not a
-null pointer; \(\scon\Sirx\) represents \(\Sirx\) should be a constant.
+Figure~\ref{fig:bdRules} defines the operational semantics of the
+behavioral types.  The semantics is defined by a labeled transition
+system over configuration of the shape $\langle P, C \rangle$.  Here,
+$C$ is the multiset of facts that holds.  We add explanation to
+important rules.
+\begin{itemize}
+ \item \textsc{Tr-Bind}: The behavioral type $(x)P$ picks up a fresh
+       name $x'$ and makes transition to $[x'/x]P$.  To understand this
+       definition, recall that the rules in
+       Figure~\ref{fig:transitionRules} for dealing with statements with
+       a binder (i.e., \textsc{Sem-LetNull}, \textsc{Sem-LetEq},
+       \textsc{Sem-LetDeref}, and \textsc{Sem-Malloc}) generate a fresh
+       variable for the bound variable and add it to the environment $R$
+       of the configuration.  The rule \textsc{Tr-Bind} simulates this
+       behavior.
+ \item \textsc{Tr-Const} and \textsc{Tr-EndConst}: The behavioral type
+       $\scon(*x)P$ adds the fact $\scon(*x)$ to $C$ and evolves to
+       $P;\Endconst$.  If $\Endconst$ is encountered, then all the facts
+       related to $*x$ in $C$ is removed by $\FILTER$.  This is parallel
+       to the semantics of $\scon(*x)s$ and $\Endconst$ in
+       Figure~\ref{fig:transitionRules}.
+ \item \textsc{Tr-ConstNondet1} and \textsc{Tr-ConstNondet2}: If the
+       fact $\scon(*x)$ is a member of $C$ and there is no $\NULL(*x)$
+       nor $\neg\NULL(*x)$, then the behavioral type $(*x)(P_1,P_2)$
+       nondeterministically chooses $P_1$ or $P_2$.  The fact
+       $\NULL(*x)$ (resp. $\neg\NULL(*x)$) is added to $C$ if the branch
+       $P_1$ (resp. $P_2$) is taken.  This addition of the fact is
+       conducted only if $\scon(*x)$ is a member of $C$ (cf.,
+       \textsc{Tr-NoConst1} and \textsc{Tr-NoConst2}).
+ \item \textsc{Tr-ConstNull} and \textsc{Tr-ConstNotNull}: If
+       $\scon(*x)$ is a member of $C$ and if $\NULL(*x)$ (resp.
+       $\neg\NULL(*x)$) is a member of $C$, then the behavioral type
+       $(*x)(P_1,P_2)$ evolves to $P_1$ (resp. $P_2$).  This happens
+       only if (1) the behavioral type $(*x)(P_1,P_2)$ was inside the
+       block of certain $\scon(*x)\{\dots\}$ and (2) there was another
+       $(*x)(P_1',P_2')$ was in the same block before $(*x)(P_1,P_2)$ is
+       reached.  Because the transition of $(*x)(P_1',P_2')$ should have
+       registered $\NULL(*x)$ or $\neg\NULL(*x)$ to $C$ and both
+       $(*x)(P_1',P_2')$ and $(*x)(P_1,P_2)$ are inside
+       $\scon(*x)\{\dots\}$, it is safe to assume that $(*x)(P_1,P_2)$
+       takes the same branch as $(*x)(P_1',P_2')$.
+ \item \textsc{Tr-NoConst1} and \textsc{Tr-NoConst2}: If $\scon(*x)$ is
+       not in the multiset of facts $C$, then the behavioral type
+       $(*x)(P_1,P_2)$ nondeterministically evolves to $P_1$ or $P_2$.
+\end{itemize}
 
-Constant value environment ranged over by \(F\) is a set of constant
-values information.
-
-\paragraph{Notation}
-\(filter\_T(F, *x)\) is defined by a pseudcode as follows:
-\[
-\begin{array}{lcl}
-  filter\_T(F, *x) &=& let \; F' = F - \scon\Sirx \; in \\
-  & & if \; \scon\Sirx \notin \; F'\; then \; return \; (F' \backslash \{\snull,\snnull\})\\
-  & & else \; return \; F'
-\end{array}
-\]
-
-
-Figure~\ref{fig:bdRules} depicts semantics of behavioral types with
-dependent types, and they are given by the labeled transition
-system. The relation \( \langle P, F \rangle \xlongrightarrow{\rho}
-\langle P', F' \rangle \) means that \(P\) can make an action
-\(\rho\), and \(P\) turns into \(P'\) after it makes action \(\rho\);
-\(F\) and \(F'\) record constant value environment before and after
-making action \(\rho\) respectively.
+% Figure~\ref{fig:bdRules} depicts semantics of behavioral types with
+% dependent types, and they are given by the labeled transition
+% system. The relation \( \langle P, F \rangle \xlongrightarrow{\rho}
+% \langle P', F' \rangle \) means that \(P\) can make an action \(\rho\),
+% and \(P\) turns into \(P'\) after it makes action \(\rho\); \(F\) and
+% \(F'\) record constant value environment before and after making action
+% \(\rho\) respectively.
 
 
 \begin{figure*}
@@ -86,99 +125,90 @@ making action \(\rho\) respectively.
 
 
 \infax[Tr-Skip]
-{ \langle \mathbf{0};P, F \rangle \rightarrow \langle P, F \rangle }
+{ \langle \mathbf{0};P, C \rangle \rightarrow \langle P, C \rangle }
+
+\infrule[Tr-Seq]
+{ \langle P_1, C \rangle \xlongrightarrow{\rho} \langle P_1', C' \rangle }
+{ \langle P_1;P_2, C \rangle \xlongrightarrow{\rho} \langle P_1';P_2, C' \rangle }
 
 %% \begin{minipage}{0.5\textwidth}
 %% \infax[Tr-Malloc]
 %%  { \langle \Malloc, F \rangle \xlongrightarrow{\Malloc} \langle {\bf 0}, F \rangle }
 %% \end{minipage}
 
-\vspace{2mm}
+\infax[Tr-Malloc]
+{ \langle \Malloc, C \rangle \xlongrightarrow{\Malloc} \langle \mathbf{0}, C \rangle }
 
-\begin{minipage}{0.5\textwidth}
 \infax[Tr-Free]
-{ \langle \Free, F \rangle \xlongrightarrow{\Free} \langle \mathbf{0}, F \rangle }
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\infax[Tr-Rec]
- { \langle \mu\alpha.P, F \rangle \rightarrow \langle
-   [\mu\alpha.P/\alpha]P, F \rangle }
- \end{minipage}
+{ \langle \Free, C \rangle \xlongrightarrow{\Free} \langle \mathbf{0}, C \rangle }
 
-\vspace{2mm}      
-
-\begin{minipage}{0.5\textwidth}
-\infax[Tr-ChoiceL]
-{ \langle P_1 + P_2, F \rangle \rightarrow \langle P_1, F \rangle }
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\infax[Tr-ChoiceR]
-{ \langle P_1 + P_2, F \rangle \rightarrow \langle P_2, F \rangle }
-\end{minipage}
-
-\infrule[Tr-Seq]
-{ \langle P_1, F \rangle \xlongrightarrow{\rho} \langle P_1', F' \rangle }
-{ \langle P_1;P_2, F \rangle \xlongrightarrow{\rho} \langle P_1';P_2, F' \rangle }
-
-\infax[Tr-LetMalloc]
-{ \langle \LET x = \Malloc \; \IN P, F \rangle \xlongrightarrow{\Malloc(x')} \langle [x'/x]P, F \rangle }
-
-\infax[Tr-LetXY]
-{ \langle \LET x = y \; \IN P, F \rangle \rightarrow \langle [x'/x]P, F \rangle }
-
-\infax[Tr-LetX*Y]
-{ \langle \LET x = *y \; \IN P, F \rangle \rightarrow \langle [x'/x]P, F \rangle }
-
-\infax[Tr-LetX]
-{ \langle \LET x = \NULL \; \IN P, F \rangle \rightarrow \langle [x'/x]P, F \rangle }
-
+\infrule[Tr-Bind]
+{\mbox{$x'$ is fresh.}}
+{ \langle (x)P, C \rangle \rightarrow \langle [x'/x]P, C \rangle }
 
 \infax[Tr-Const]
-{ \langle \scon\Sirx P, F \rangle \rightarrow \langle P;\Endconst, F\cup \{\scon\Sirx\} \rangle }
+{ \langle \scon\Sirx P, C \rangle \rightarrow \langle P;\Endconst, C + \{\scon\Sirx\} \rangle }
 
 \infrule[Tr-Endconst]
-{F' = filter\_T(F, *x)}
-{ \langle \Endconst, F \rangle \rightarrow \langle \mathbf{0}, F' \rangle }
-
-%% \infrule[Tr-NNullNotIn]
-%% { \snnull \notin F \andalso \scon\Sirx \in F}
-%% { \langle \Sirx (P_1,P_2), F \rangle \rightarrow \langle P_1, F\cup\{\snull\} \rangle }
+{C' = \FILTER(C, *x)}
+{ \langle \Endconst, C \rangle \rightarrow \langle \mathbf{0}, C' \rangle }
 
 \begin{minipage}{0.5\textwidth}
-\infrule[Tr-NotConst1]
-{ \scon\Sirx \notin F }
-{ \langle \Sirx (P_1,P_2), F \rangle \xlongrightarrow{\snull} \langle P_1, F \rangle }
+\infrule[Tr-NoConst1]
+{ \scon\Sirx \notin C }
+{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snull} \langle P_1, C \rangle }
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-\infrule[Tr-NotConst2]
-{ \scon\Sirx \notin F }
-{ \langle \Sirx (P_1,P_2), F \rangle \xlongrightarrow{\snnull} \langle P_2, F \rangle }
+\infrule[Tr-NoConst2]
+{ \scon\Sirx \notin C }
+{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snnull} \langle P_2, C \rangle }
 \end{minipage}
-\vspace{2mm}
 %% \infrule[Tr-NullNotIn]
 %% { \snull \notin F \andalso \scon\Sirx \in F }
 %% { \langle \Sirx (P_1,P_2), F \rangle \rightarrow \langle P_2, F\cup\{\snnull\} \rangle }
 
 \begin{minipage}{0.5\textwidth}
-\infrule[Tr-NullIn]
-{ \snull \in F \andalso \scon\Sirx \in F }
-{ \langle \Sirx (P_1,P_2), F \rangle \rightarrow \langle P_1, F \rangle }
+\infrule[Tr-ConstNull]
+{ \snull, \scon\Sirx \in C }
+{ \langle \Sirx (P_1,P_2), C \rangle \rightarrow \langle P_1, C \rangle }
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
-\infrule[Tr-NNullIn]
-{ \snnull \in F \andalso \scon\Sirx \in F }
-{ \langle \Sirx (P_1,P_2), F \rangle \rightarrow \langle P_2, F \rangle }
+\infrule[Tr-ConstNotNull]
+{ \snnull, \scon\Sirx \in C }
+{ \langle \Sirx (P_1,P_2), C \rangle \rightarrow \langle P_2, C \rangle }
 \end{minipage}
 
 
-\infrule[Tr-NNullNotIn1]
-{ \snull, \snnull \notin F \andalso \scon\Sirx \in F }
-{ \langle \Sirx (P_1,P_2), F \rangle \xlongrightarrow{\snull} \langle P_1, F\cup{\snull} \rangle }
+\infrule[Tr-ConstNondet1]
+{ \snull, \snnull \notin C \andalso \scon\Sirx \in C }
+{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snull} \langle P_1, C\cup{\snull} \rangle }
 
-\infrule[Tr-NNullNotIn2]
-{ \snull, \snnull \notin F \andalso \scon\Sirx \in F }
-{ \langle \Sirx (P_1,P_2), F \rangle \xlongrightarrow{\snnull} \langle P_2, F\cup{\snnull} \rangle }
+\infrule[Tr-ConstNondet2]
+{ \snull, \snnull \notin C \andalso \scon\Sirx \in C }
+{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snnull} \langle P_2, C\cup{\snnull} \rangle }
 
+% \begin{minipage}{0.5\textwidth}
+% \infax[Tr-ChoiceL]
+% { \langle P_1 + P_2, F \rangle \rightarrow \langle P_1, F \rangle }
+% \end{minipage}
+% \begin{minipage}{0.5\textwidth}
+% \infax[Tr-ChoiceR]
+% { \langle P_1 + P_2, F \rangle \rightarrow \langle P_2, F \rangle }
+% \end{minipage}
+
+\infax[Tr-Rec]
+ { \langle \mu\alpha.P, C \rangle \rightarrow \langle
+   [\mu\alpha.P/\alpha]P, C \rangle }
+
+% \infax[Tr-LetX*Y]
+% { \langle \LET x = *y \; \IN P, F \rangle \rightarrow \langle [x'/x]P, F \rangle }
+
+% \infax[Tr-LetX]
+% { \langle \LET x = \NULL \; \IN P, F \rangle \rightarrow \langle [x'/x]P, F \rangle }
+
+%% \infrule[Tr-NNullNotIn]
+%% { \snnull \notin F \andalso \scon\Sirx \in F}
+%% { \langle \Sirx (P_1,P_2), F \rangle \rightarrow \langle P_1, F\cup\{\snull\} \rangle }
  
 %%   \label{df:fv}
 %%   \mbox{The set of free variables of behavioral type \(P\) is defined as
@@ -197,225 +227,320 @@ making action \(\rho\) respectively.
 \label{fig:bdRules}
 \end{figure*}
 
-\subsection{Typing rules}
-The type judgment for statements is of the form \(\Theta; \Gamma
-\vdash s : P \), which represents that under the function type
-environment \(\Theta\) and the variable type environment \(\Gamma\),
-the abstracted behavioral type of statement \(s\) is \(P\).
+\begin{exmp}
+Let $P$ be the behavioral type
+\[
+ \scon(*x)\{(*x)(\Malloc,\mathbf{0});(*x)(\Free,\mathbf{0})\}.
+\]
+We write $P_1$ for $(*x)(\Malloc,\mathbf{0})$, $P_2$ for
+$(*x)(\Free,\mathbf{0})$, $C_1$ for $\set{\scon(*x)}$, $C_2$ for
+$\set{\NULL(*x)}$, and $C_3$ for $\set{\neg\NULL(*x)}$.  Then, the
+following transition sequence is possible.
+\[
+ \begin{array}{ll}
+                 & \langle P, \emptyset \rangle\\
+  \xrightarrow{} & \langle P_1;P_2;\Endconst, C_1 \rangle\\
+  \xrightarrow{} & \langle \Malloc;P_2;\Endconst, C_1 \cup C_2 \rangle\\
+  \xrightarrow{\Malloc} & \underline{\langle P_2;\Endconst, C_1 \cup C_2 \rangle}\\
+  \xrightarrow{} & \langle \Free;\Endconst, C_1 \cup C_2 \rangle\\
+  \xrightarrow{\Free} & \langle \Endconst, C_1 \cup C_2 \rangle\\
+  \xrightarrow{} & \langle \mathbf{0}, \emptyset \rangle.\\
+ \end{array}
+\]
+Notice that, from the underlined configuration, the transition to
+$\langle \mathbf{0};\Endconst, C_1 \cup C_2 \rangle$ is not allowed
+because the facts include $\scon(*x)$ and $\NULL(*x)$.  Another possible
+transition is
+\[
+ \begin{array}{ll}
+                 & \langle P, \emptyset \rangle\\
+  \xrightarrow{} & \langle P_1;P_2;\Endconst, C_1 \rangle\\
+  \xrightarrow{} & \langle \mathbf{0};P_2;\Endconst, C_1 \cup C_3 \rangle\\
+  \xrightarrow{} & \underline{\langle P_2;\Endconst, C_1 \cup C_3 \rangle}\\
+  \xrightarrow{} & \langle \mathbf{0};\Endconst, C_1 \cup C_3 \rangle\\
+  \xrightarrow{} & \langle \Endconst, C_1 \cup C_3 \rangle\\
+  \xrightarrow{} & \langle \mathbf{0}, \emptyset \rangle.\\
+ \end{array}
+\]
+A transition to $\langle \Free;\Endconst, C_1 \cup C_3 \rangle$ is not
+allowed because $C_1 \cup C_3$ contains $\scon(*x)$ and $\neg\NULL(*x)$.
+Notice that the path-sensitive behavioral type excludes the possibility
+of $\langle P, \emptyset \rangle \xrightarrow{\Malloc} \langle
+\mathbf{0}, \emptyset \rangle$ and $\langle P, \emptyset \rangle
+\xrightarrow{\Free} \langle \mathbf{0}, \emptyset \rangle$.
+\end{exmp}
 
-Before showing typing rules for statements in
-Figure~\ref{fig:TypingRules}, we need explain several important
-definitions. The first one is \(OK_n(P, F)\), a predicate, where \(P\)
-represents the behavior of a program which consumes at most \(n\)
-memory cells under constant value environment \(F\).
+\subsection{Type judgment}
 
-\begin{myDef}[\(\sharp_{\rho}(\sigma)\)]
-\label{df:sharf}
-\(\sharp_{\rho}(\sigma)\) is the number of \(\rho\) in the sequence
-\(\sigma\).
-\end{myDef}
+The type judgment for statements is of the form \(\Theta; \Gamma \vdash
+s : P \).  The judgment reads ``the behavior of $s$ is $P$ under the
+function type environment $\Theta$ and the variable type environment
+$\Gamma$''.
 
-%% \begin{myDef}
-%% \label{df:const}
-%% \(\sconst\) means:\\
-%% \( \forall \sigma',\sigma''\). \(\sigma'\) is a subsequence
-%% of \(\sigma\), and \(\sigma' = \Startconst;\sigma'';\Endconst\) or \(\sigma' = \sigma'';\Endconst\). The \(\sigma''\) does not contain \(\Startconst\) or \(\Endconst \), and it also does not contain both \(\sassx\) and \(\sassxn\).
-%% \end{myDef}
-
-
-\begin{myDef}
-\label{df:okn}
-\(OK_{n}(P, F)\) holds if, (1) \( \forall P'\) and \(\sigma\). if \( \langle P, F \rangle
-\xlongrightarrow{\sigma} \langle P', F' \rangle \), then \( \sharp_m(\sigma) - \sharp_f(\sigma) \le n\) and (2) \( OK(F) \)
-\end{myDef}
-
-\begin{myDef}
-\label{df:okf}
-\(OK(F)\) holds if F does not contain both \( \snull \) and \( \snnull \).
-\end{myDef}
-
-Intuitively, \(OK_n(P, F)\) represents at very running steps, the
-number of memory cells a program consumed will not exceed the number
-of memory cells the program requires.
-
+We incorporate subtyping to our type system defined as follows.
 \begin{myDef}[Subtyping]
-\( F\vdash P_1 \le P_2\) is the largest relation such that, for any
-\(P_1'\), \(F'\) and \(\rho\), if \( \langle P_1, F \rangle
-\xlongrightarrow{\rho} \langle P_1', F' \rangle \), then there exists
-\(P_2'\) such that \( \langle P_2, F \rangle \xLongrightarrow{\rho}
-\langle P_2', F' \rangle \) and \( F'\vdash P_1' \le P_2'\).  We write
-\( P_1 \le P_2\) if \(F\vdash P_1 \le P_2\) for any F.
-\label{df:subtype}
+\label{df:subtype} \(C \vdash P_1 \le P_2\) is the largest relation such
+that, for any \(P_1'\), $C'$, and \(\rho\), if \( \langle P_1, C \rangle
+\xlongrightarrow{\rho} \langle P_1', C' \rangle \), then there exists
+\(P_2'\) such that \( \langle P_2, C \rangle \xLongrightarrow{\rho}
+\langle P_2', C' \rangle \) and \(C' \vdash P_1' \le P_2'\).  We write
+\(P_1 \le P_2\) if \(C \vdash P_1 \le P_2\) for any F.
 \end{myDef}
 
 \begin{figure*}
-\small
+\begin{minipage}{\textwidth}
 
 \begin{minipage}{0.5\textwidth}
 \infax[T-Skip]
-{\Theta ; \Gamma ; C \vdash \SKIP : \mathbf{0}; C}
+{\Theta ; \Gamma \vdash \SKIP : \mathbf{0}}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \infrule[T-Seq]
-{\Theta ; \Gamma ; C_1 \vdash s_{1} : P_{1}; C_2 \andalso \Theta ; \Gamma ; C_2 \vdash s_{2} : P_{2}; C_3}
-{\Theta ; \Gamma ; C_1 \vdash s_{1} ; s_{2} : P_{1};P_{2} ; C_3}
+{\Theta ; \Gamma \vdash s_{1} : P_{1} \andalso \Theta ; \Gamma \vdash s_{2} : P_{2}}
+{\Theta ; \Gamma \vdash s_{1} ; s_{2} : P_{1};P_{2} }
 \end{minipage}
-
 
 
 \begin{minipage}{0.5\textwidth}
 \infax[T-Assign]
-{\Theta ; \Gamma, x, y ; C \vdash *x \leftarrow y : \mathbf{0}; C}
+{\Theta ; \Gamma, x, y \vdash *x \leftarrow y : \mathbf{0} }
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 \infax[T-Free]
-{\Theta ; \Gamma, x ; C \vdash \Free(x) : \Free; C}
+{\Theta ; \Gamma, x \vdash \Free(x) : \Free}
 \end{minipage}
 
 
-
+\begin{minipage}{0.5\textwidth}
 \infrule[T-Malloc]
-{\Theta ; \Gamma,x ; C_1 \vdash s : P; C_2}
-{\Theta ; \Gamma ; \FILTER(C_1,x) \vdash \LET x = \MALLOC\  \IN s :\LET x = \Malloc\ \IN P; \FILTER(C_2,x)}
-
+{\Theta ; \Gamma,x \vdash s : P}
+{\Theta ; \Gamma \vdash \LET x = \MALLOC\ \IN s \COL \Malloc;(x)P}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
 \infrule[T-LetEq]
-{\Theta ; \Gamma , x, y ; C_1 \vdash s : P; C_2}
-{\Theta ; \Gamma, y ; [y/x]C_1 \vdash \LET x = y \; \IN s : [y/x]P; [y/x]C_2}
+{\Theta ; \Gamma , x, y  \vdash s : P}
+{\Theta ; \Gamma, y \vdash \LET x = y\ \IN s : [y/x]P}
+\end{minipage}
 
 
-
-\infrule[T-LetDeref1]
-{\scon(*y) \in C_1 \andalso \NULL(*y) \in C_1 \andalso \Theta ; \Gamma , x,y; C_1  \vdash s : P; C_2}
-{\Theta ; \Gamma, y ; \FILTER(C_1, x) \vdash \LET x = *y \; \IN s : P'; \FILTER(C_2,x)}
-
-\infrule[T-LetDeref2]
-{\scon(*y) \in C_1 \andalso \NULL(*y) \notin C_1 \andalso \Theta ; \Gamma , x, y ; C_1 \vdash s : P; C_2}
-{\Theta ; \Gamma, y ; [*y/x]C_1 \vdash \LET x = *y \; \IN s : [*y/x]P; [*y/x]C_2}
-
-\infrule[T-LetDeref3]
-{\scon(*y) \notin C \andalso \Theta ; \Gamma , x,y; C_1  \vdash s : P; C_2}
-{\Theta ; \Gamma, y ; \FILTER(C_1, x) \vdash \LET x = *y \; \IN s : P \uparrow x; \FILTER(C_2,x)}
-
+\begin{minipage}{0.5\textwidth}
+\infrule[T-LetDeref]
+{\Theta ; \Gamma , x, y  \vdash s : P}
+{\Theta ; \Gamma, y \vdash \LET x = *y\ \IN s : (x)P}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
 \infrule[T-LetNull]
-{\Theta ; \Gamma, x; C \cup \set{\NULL(x)} \vdash s : P; C_2}
-{\Theta ; \Gamma ; \FILTER(C,x) \vdash \LET x = \NULL \IN s : [\NULL/x]P; \FILTER(C_2,x)}
-
-\infrule[T-Const] 
-{\Theta ; \Gamma, x ; C_1 + \set{\scon(*x)} \vdash s : P; C_2}
-{\Theta ; \Gamma,x ; C_1 \vdash \scon(*x) s : \scon(*x) P; C_2}
+{\Theta ; \Gamma, x  \vdash s : P  \Rtab}
+{\Theta ; \Gamma \vdash \LET x = \NULL\ \IN s : (x)P}
+\end{minipage}
 
 \infax[T-Endconst] 
-{\Theta ; \Gamma,x ; C \vdash \Endconst : \Endconst; C - \set{\scon(*x)}}
+{\Theta ; \Gamma,x \vdash \Endconst : \Endconst}
 
-\infrule[T-IfNull1]
-{\scon(*x),\NULL(*x) \in C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{1} : P_1; C_2}
-{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : P_1; C_2}
-\infrule[T-IfNull2]
-{\scon(*x),\neg\NULL(*x) \in C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{2} : P_2; C_2}
-{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : P_2; C_2}
-\infrule[T-IfNull3]
-{\scon(*x) \in C_1 \andalso \NULL(*x),\neg\NULL(*x) \notin C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{1} : P_1; C_2 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{2} : P_2; C_2}
-{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : (*x)(P_1,P_2); C_2}
-\infrule[T-IfNull4]
-{\scon(*x) \notin C_1 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{1} : P_1; C_2 \andalso \Theta ; \Gamma, x; C_1 \vdash s_{2} : P_2; C_2}
-{\Theta ; \Gamma, x ; C_1 \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : P_1+P_2; C_2}
+\infrule[T-Const] 
+{\Theta ; \Gamma, x \vdash s : P }
+{\Theta ; \Gamma,x \vdash \scon\Sirx s : \scon\Sirx P}
 
-\infax[T-Call] {\Theta, f \COL (\vec{x}; C_1; C_2)P; \Gamma, \vec{y}; [\vec{y}/\vec{x}]C_1 \vdash f(\vec{y}) :  [\vec{y}/\vec{x}]P; [\vec{y}/\vec{x}]C_2}
+
+%%\begin{minipage}{0.5\textwidth}  \andalso x \in \mathbf{FV}(P_1) \cup \mathbf{FV}(P_2)
+\infrule[T-IfNull] 
+{\Theta ; \Gamma, x \vdash s_{1} : P_1 \andalso \Theta ; \Gamma, x \vdash s_{2} : P_2}
+{\Theta ; \Gamma, x \vdash \IFNULL\Sirx \; \THEN s_{1}\; \ELSE s_{2} : (*x)(P_1,P_2)}
+%%\end{minipage}
+%%\begin{minipage}{0.5\textwidth}
+\infax[T-Call] {\Theta, f \COL (\vec{x})P; \Gamma, \vec{y} \vdash f(\vec{y}) :  [\vec{y}/\vec{x}]P}
+%%\end{minipage}
+
+%%\vspace{2mm} 
 
 \infrule[T-Sub]
-{\Theta ; \Gamma ; C_1' \vdash s : P_{1}; C_2' \andalso P_{1} \le P_{2} \andalso C_1 \supseteq C_1' \andalso C_2' \supseteq C_2}
-{\Theta ; \Gamma ; C_1 \vdash s : P_{2}; C_2}
-\caption{Typing rules for statements.}
-\label{fig:typingStmt}
-\end{figure*}
+{\Theta ; \Gamma \vdash s : P_{1} \andalso P_{1} \le P_{2}}
+{\Theta ; \Gamma \vdash s : P_{2}}
 
-\begin{figure*}
-
-\infrule[T-Def]
-        { \Theta(f) = (\vec{x}; C_1; C_2)P \andalso \DOM(D) = \DOM(\Theta)
-          \andalso \Theta; x_1,\dots,x_n; C_1 \vdash s \COL P; C_2
-          \mbox{ for each \(f \mapsto (x_1,\dots,x_n)s \in D\)}
-        }
-        {\vdash D \COL \Theta}
+\infrule[T-Def] { \Theta(f) = (\vec{x})P \andalso \DOM(D) = \DOM(\Theta)
+        \andalso \Theta; x_1,\dots,x_n \vdash s \COL P \mbox{ for each
+        \(f \mapsto (x_1,\dots,x_n)s \in D\)} } {\vdash D \COL \Theta}
 % Program
 \infrule[T-Program]
-{\vdash D : \Theta \andalso \Theta; \emptyset; \emptyset \vdash s : P; C \andalso OK_{n}(P, F)}
-{\vdash \langle D, s \rangle : n}
+{\vdash D : \Theta \andalso \Theta; \emptyset\vdash s : P}
+{\vdash \langle D, s \rangle : P}
 
-\caption{Typing rules for procedure definitions and programs.}
-\label{fig:typingDefs}
+\end{minipage}
+\caption{Typing rules.}
+\label{fig:TypingRules}
 \end{figure*}
 
-Figure~\ref{fig:TypingRules} shows the typing rules. For example, the
-rule \rn{T-IfNull} represents the behavior of \(\IFNULL\Sirx \; \THEN
-s_{1}\; \ELSE s_{2}\) is abstracted as \(\Sirx(P_1, P_2)\) where
-\(P_1\) and \(P_2\) are the behavior of \(s_1\) and \(s_2\)
-respectively; this conditional statement means that executing \(s_1\)
-if \(\Sirx\) is a null pointer, otherwise \(s_2\).  The typing rule
-\rn{T-Program} represents a program requires at most \(n\) memory
-cells during running under the predication \(OK_n(P, F)\), where \(P\)
-is behavioral type of statement \(s\).
+The type judgment $\Theta; \Gamma \vdash s \COL P$ is defined as the
+least relation that satisfies the rules in Figure~\ref{fig:TypingRules}.
+We give explanation to several important rules.
+\begin{itemize}
+ \item \textsc{T-Malloc}: The statement $\LET\ x = \Malloc()\ \IN\ s$
+       performs an allocation once, binds the variable $x$, and then
+       executes $s$.  The behavior of the whole statement is therefore
+       $\Malloc;(x)P$.
+ \item \textsc{T-LetEq}: The statement $\LET\ x = y\ \IN\ s$ makes an
+       alias $x$ of $y$ and then executes $s$.  Therefore, we rename $x$
+       to $y$ in the behavioral type $P$ of $s$.
+ \item \textsc{T-LetDeref} and \textsc{T-LetNull}: The statements $\LET\
+       x = *y\ \IN s$ and $\LET\ x = \NULL\ \IN\ s$ bind $x$ and then
+       execute $s$.  Therefore, the type of the whole statement is
+       $(x)P$.  The type system just ignores that what the variable $x$
+       is bound to.
+ \item \textsc{T-IfNull}: The statement 
+       \[
+       \IFNULL(*x)\ \THEN\ s_1\ \ELSE\ s_2
+       \]
+       branches depending on whether $*x$ is null or not.  This behavior
+       is abstracted by the type $(*x)(P_1,P_2)$.
+ \item \textsc{T-Call}: If the type of the procedure $f$ is
+       $(\vec{x})P$, then the type of $f(\vec{y})$ is
+       $[\vec{y}/\vec{x}]P$; notice that $P$ may depend on the arguments
+       of the procedure.
+\end{itemize}
 
+Typing rules for the declarations $D$ and programs $\langle D, s
+\rangle$ are also shown in Figure~\ref{fig:TypingRules}.  These rules
+are standard.
 
 \subsection{Type soundness}
-\begin{theorem}\label{thm1}
-If $\vdash \langle D, s \rangle : n$ for some \(n\), then \(\langle D,
-s \rangle\) is totally memory-leak free.
-\end{theorem}
 
-The proof is based on the following lemmas: preservation and lack of
-immediate overflow.
+Although we have not completed the proof concretely, we conjecture that
+the following preservation theorem for the judgment $\Theta;\Gamma
+\vdash s \COL P$ holds.
+\begin{conjecture}[Preservation]
+ \label{conj:preservation}
+ Suppose that
+ \begin{itemize}
+  \item $\vdash D \COL \Theta$,
+  \item $\Theta;\Gamma \vdash s \COL P$,
+  \item $\Gamma \subseteq \DOM(R)$,
+  \item $\langle H,R,s,n,C \rangle \xlongrightarrow{\rho} \langle H',R',s',n',C' \rangle$,
+ \end{itemize}
+ Then, there exist $\Gamma'$ and $P'$ such that
+ \begin{itemize}
+  \item $\Theta;\Gamma' \vdash s' \COL P'$,
+  \item $\Gamma' \subseteq \DOM(R')$,
+  \item $\langle P,C \rangle \xLongrightarrow{\rho} \langle P',C' \rangle$.
+ \end{itemize}
+\end{conjecture}
 
-%% \begin{myDef}
-%%   \label{df:Rab}
-%%   Rab(\(\langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \rangle\)) should be
-%%   \[
-%%     \left\{
-%%    \begin{array}{ll}
-%%      \langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \rangle & \rho = \{\Free, \Malloc\}\\
-%%      \langle P, F \rangle \rightarrow \langle P', F' \rangle & \mbox{Otherwise.}
-%%    \end{array}
-%%    \right.
-%% \]
-%% \end{myDef}
+% \begin{lemma}[Preservation]
+% \label{lem:preservation}
+% suppose that \( \Theta; \Gamma \vdash \langle H, R, s, n, C \rangle :
+% \langle P, F \rangle\). If \( \langle H, R, s, n, C \rangle
+% \xlongrightarrow{\rho} \langle H', R', s', n', C' \rangle\) then
+% \(\exists P', F'\) s.t. (1) \( \Theta; \Gamma \vdash \langle H', R',
+% s', n', C' \rangle : \langle P', F' \rangle\) and (2) \(\langle P, F
+% \rangle \xLongrightarrow{\rho} \langle P', F'\rangle \).
+% \end{lemma}
+
+The following fact is a corollary of Conjecture~\ref{conj:preservation}.
+\begin{conjecture}\label{cor:progAbstract}
+ If $\vdash \langle D, s \rangle : P$ and $\langle \emptyset, \emptyset,
+ s, n, \emptyset \rangle \xLongrightarrow{\sigma}_D$, then $\langle P,
+ \emptyset \rangle \xLongrightarrow{\sigma}$.
+\end{conjecture}
+
+\subsection{Verification of memory-leak freedom of a program using 
+the inferred behavioral type}
+
+Conjecture~\ref{cor:progAbstract} states that the behavior of a program
+is soundly abstracted by its type.  This section describes how the
+inferred type can be used to estimate an upper bound of memory
+consumption.  We first define ``memory consumption'' of a behavioral
+type.
 
 \begin{myDef}
-  \label{df:Rdu}
- we write \( \Theta; \Gamma \vdash \langle H, R, s, n, C \rangle : \langle P,
-  F \rangle\), if \(\Theta; \Gamma \vdash s : P\) and \(OK_n(P, F)\) with \(C \thickapprox F\).  
+\label{df:okn} We write \(OK_n(P, C)\) if (1) \(\langle P, F \rangle
+\xlongrightarrow{\sigma} \langle P', F'\rangle \) implies
+\(\sharp_\Malloc(\sigma) - \sharp_\Free(\sigma) \le n\) where
+$\sharp_\rho(\sigma)$ is the number of $\rho$ in $\sigma$.
 \end{myDef}
 
-%% \begin{lemma}[Preservation]
-%% \label{lem:preservation}
-%% If \(OK_{n}(P, F)\), \(\Theta; \Gamma \vdash s : P \), \(\vdash D \COL
-%% \Theta\), and \( \langle H, R, s, n, C \rangle \xlongrightarrow{\rho}
-%% \langle H, R', s', n', C' \rangle \), then there exists \(P'\) and \(F'\)
-%% such that (1) \( \Theta; \Gamma^{'} \vdash s' : P'\), (2)
-%% Rab(\(\langle P, F \rangle \xlongrightarrow{\rho} \langle P', F'
-%% \rangle\)), and (3) \(OK_{n'}(P', F')\).
-%% \end{lemma}
- 
-\begin{lemma}[Preservation]
-\label{lem:preservation}
-suppose that \( \Theta; \Gamma \vdash \langle H, R, s, n, C \rangle :
-\langle P, F \rangle\). If \( \langle H, R, s, n, C \rangle
-\xlongrightarrow{\rho} \langle H', R', s', n', C' \rangle\) then
-\(\exists P', F'\) s.t. (1) \( \Theta; \Gamma \vdash \langle H', R',
-s', n', C' \rangle : \langle P', F' \rangle\) and (2) \(\langle P, F
-\rangle \xLongrightarrow{\rho} \langle P', F'\rangle \).
-\end{lemma}
-
-
-%% \begin{lemma}[Lack of immediate overflow]
-%% \label{lem:immediateSafety}
-%% If \(\Theta; \Gamma \vdash s \COL P \), \(\vdash D \COL \Theta\), and
-%% \(\OK_n(P)\), then \(\langle H, R, s, n \rangle
-%% \not\xlongrightarrow{\Malloc} \OVERFLOW \).
-%% \end{lemma}
-
-\begin{lemma}[Lack of immediate overflow]
+\begin{conjecture}
 \label{lem:immediateSafety}
-If \( \Theta; \Gamma \vdash \langle H, R, s, n, C \rangle :
-\langle P, F \rangle\), then \(\langle H, R, s, n, C \rangle
-\not\xlongrightarrow{\Malloc} \OVERFLOW \).
-\end{lemma}
+If
+ \begin{itemize}
+  \item $\Theta;\Gamma \vdash s \COL P$,
+  \item $\Gamma \subseteq \DOM(R)$,
+  \item $\OK_n(P,C)$, and
+  \item $n' \ge n$,
+ \end{itemize}
+ Then, \(\langle H, R, s, n, C \rangle \xLongrightarrow{\sigma}^* \OVERFLOW \).
+\end{conjecture}
+
+The conjecture above states that, if $\vdash \langle D, s \rangle \COL
+P$ and $\OK_n(P,\emptyset)$ hold, then $n$ is an upper bound of the
+program.  Therefore, by conducting type inference to the program,
+obtaining a type, say, $P$, and estimating an upper bound of $P$, we can
+estimate an upper bound of the memory consumption of the program.
+
+% FROM HERE.
+
+% \begin{myDef}
+% \label{df:okf} \(OK(F)\) holds if F does not contain both \( \snull \)
+% and \( \snnull \).
+% \end{myDef}
+
+% \begin{myDef}
+%   \label{df:Rdu}
+%  we write \( \Theta; \Gamma \vdash \langle H, R, s, n, C \rangle : \langle P,
+%   F \rangle\), if \(\Theta; \Gamma \vdash s : P\) and \(OK_n(P, F)\) with \(C \thickapprox F\).  
+% \end{myDef}
+
+% The proof is based on the following lemmas: preservation and lack of
+% immediate overflow.
+
+% %% \begin{lemma}[Preservation]
+% %% \label{lem:preservation}
+% %% If \(OK_{n}(P, F)\), \(\Theta; \Gamma \vdash s : P \), \(\vdash D \COL
+% %% \Theta\), and \( \langle H, R, s, n, C \rangle \xlongrightarrow{\rho}
+% %% \langle H, R', s', n', C' \rangle \), then there exists \(P'\) and \(F'\)
+% %% such that (1) \( \Theta; \Gamma^{'} \vdash s' : P'\), (2)
+% %% Rab(\(\langle P, F \rangle \xlongrightarrow{\rho} \langle P', F'
+% %% \rangle\)), and (3) \(OK_{n'}(P', F')\).
+% %% \end{lemma}
+
+
+
+% %% \begin{lemma}[Lack of immediate overflow]
+% %% \label{lem:immediateSafety}
+% %% If \(\Theta; \Gamma \vdash s \COL P \), \(\vdash D \COL \Theta\), and
+% %% \(\OK_n(P)\), then \(\langle H, R, s, n \rangle
+% %% \not\xlongrightarrow{\Malloc} \OVERFLOW \).
+% %% \end{lemma}
+
+% Before showing typing rules for statements in
+% Figure~\ref{fig:TypingRules}, we need explain several important
+% definitions. The first one is \(OK_n(P, F)\), a predicate, where \(P\)
+% represents the behavior of a program which consumes at most \(n\) memory
+% cells under constant value environment \(F\).
+
+% \begin{myDef}[\(\sharp_{\rho}(\sigma)\)]
+% \label{df:sharf}
+% \(\sharp_{\rho}(\sigma)\) is the number of \(\rho\) in the sequence
+% \(\sigma\).
+% \end{myDef}
+
+% %% \begin{myDef}
+% %% \label{df:const}
+% %% \(\sconst\) means:\\
+% %% \( \forall \sigma',\sigma''\). \(\sigma'\) is a subsequence
+% %% of \(\sigma\), and \(\sigma' = \Startconst;\sigma'';\Endconst\) or \(\sigma' = \sigma'';\Endconst\). The \(\sigma''\) does not contain \(\Startconst\) or \(\Endconst \), and it also does not contain both \(\sassx\) and \(\sassxn\).
+% %% \end{myDef}
+
+% Intuitively, \(OK_n(P, F)\) represents at very running steps, the
+% number of memory cells a program consumed will not exceed the number
+% of memory cells the program requires.
+
+% Figure~\ref{fig:TypingRules} shows the typing rules. For example, the
+% rule \rn{T-IfNull} represents the behavior of \(\IFNULL\Sirx \; \THEN
+% s_{1}\; \ELSE s_{2}\) is abstracted as \(\Sirx(P_1, P_2)\) where
+% \(P_1\) and \(P_2\) are the behavior of \(s_1\) and \(s_2\)
+% respectively; this conditional statement means that executing \(s_1\)
+% if \(\Sirx\) is a null pointer, otherwise \(s_2\).  The typing rule
+% \rn{T-Program} represents a program requires at most \(n\) memory
+% cells during running under the predication \(OK_n(P, F)\), where \(P\)
+% is behavioral type of statement \(s\).
+
+

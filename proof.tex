@@ -10,7 +10,7 @@ If \( \langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \rangle\) and \
 By induction on \( \langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \rangle\).
   \begin{itemize}
 
-  \item Case \( P = {\bf 0};P'\) and \( \langle {\bf 0};P', F \rangle \rightarrow \langle P', F \rangle \)
+  \item Case \( P = \mathbf{0};P'\) and \( \langle \mathbf{0};P', F \rangle \rightarrow \langle P', F \rangle \)
     
       We need to prove \(OK(F')\). From assumption, we have that
       \(OK(F)\) holds, and in this case \(F'\) is the same as
@@ -38,7 +38,7 @@ By induction on \( \langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \r
 
       Similiar to above.
 
-    \item Case \( P = \Free\) and \( \langle \Free, F \rangle \xlongrightarrow{\Free} \langle {\bf 0}, F \rangle \)
+    \item Case \( P = \Free\) and \( \langle \Free, F \rangle \xlongrightarrow{\Free} \langle \mathbf{0}, F \rangle \)
 
       Similiar to above.
 
@@ -87,7 +87,7 @@ By induction on \( \langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \r
       \snnull\). Therefore,\( OK(F\cup\{ \scon\Sirx\})\) holds.
 
     \item Case \( P = \Endconst\) and \(\frac{F' = filter\_T(F, *x)} {
-      \langle \Endconst, F \rangle \rightarrow \langle {\bf 0}, F'
+      \langle \Endconst, F \rangle \rightarrow \langle \mathbf{0}, F'
       \rangle } \) 
 
       we need to prove \(OK(F')\). Form assumption, we have \(OK(F)\)
@@ -138,7 +138,7 @@ By induction on \(\langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \ra
 
 \begin{itemize}
 
-\item Case \(P = {\bf 0};P'\) and \( \langle {\bf 0};P', F \rangle \rightarrow \langle P', F \rangle\)
+\item Case \(P = \mathbf{0};P'\) and \( \langle \mathbf{0};P', F \rangle \rightarrow \langle P', F \rangle\)
 
   We need to prove \(\OK_n(P', F)\).  Assume that \(\OK_n(P', F)\)
   does not hold. Then, we have (1) \( \exists \sigma \) and \(Q\) s.t. \(
@@ -146,8 +146,8 @@ By induction on \(\langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \ra
   \), \(\sharp_{m}(\sigma) - \sharp_{f}(\sigma) > n\) or (2) \(
   OK(F)\) does not hold.
 
-  From the definition of that \(OK({\bf 0};P', F)\) holds, we have (1)
-  if \( \langle {\bf 0};P', F \rangle \rightarrow \langle P', F
+  From the definition of that \(OK(\mathbf{0};P', F)\) holds, we have (1)
+  if \( \langle \mathbf{0};P', F \rangle \rightarrow \langle P', F
   \rangle \xlongrightarrow{\sigma} \langle Q, F' \rangle \), then
   \(\sharp_m(\sigma) - \sharp_f(\sigma) \le n \) and (2) \(OK(F)\),
   which are in contradiction to the assumption. Therefore, \(\OK_n(P',
@@ -184,31 +184,31 @@ By induction on \(\langle P, F \rangle \xlongrightarrow{\rho} \langle P', F' \ra
     Similar to the above.
   
 \item Case \(P = \Free\) and \(\langle \Free, F \rangle
-  \xlongrightarrow{\Free} \langle {\bf 0}, F \rangle \)
+  \xlongrightarrow{\Free} \langle \mathbf{0}, F \rangle \)
 
-  We need to prove \(\OK_{n+1}({\bf 0}, F)\), which means we need to
-  prove (1) \( \forall \sigma \) and \(Q\) if \( \langle {\bf 0}, F
+  We need to prove \(\OK_{n+1}(\mathbf{0}, F)\), which means we need to
+  prove (1) \( \forall \sigma \) and \(Q\) if \( \langle \mathbf{0}, F
   \rangle \xlongrightarrow{\sigma} \langle Q, F' \rangle \), then
   \(\sharp_{m}(\sigma) - \sharp_{f}(\sigma) \le n\) and (2) \( OK(F)\)
-  holds.  There is no \(Q\) and \(\sigma\) s.t. \(\langle {\bf 0}, F
+  holds.  There is no \(Q\) and \(\sigma\) s.t. \(\langle \mathbf{0}, F
   \rangle \xlongrightarrow{\sigma} \langle Q, F \rangle \), so (1)
   holds.  \(OK(F)\) holds from
-  Lemma~\ref{lem:okFpreserved}. Therefore, \(OK({\bf 0}, F)\) holds.
+  Lemma~\ref{lem:okFpreserved}. Therefore, \(OK(\mathbf{0}, F)\) holds.
 
 \item Case \(P = \Endconst\) and \(\frac {F' = filter\_T(F, *x) }
-  {\langle \Endconst, F \rangle \rightarrow \langle {\bf 0}, F' \rangle} \)
+  {\langle \Endconst, F \rangle \rightarrow \langle \mathbf{0}, F' \rangle} \)
 
-  We need to prove \(\OK_n({\bf 0}, F')\), which means we need to
-  prove (1) \( \forall \sigma \) and \(Q\) if \( \langle {\bf 0}, F
+  We need to prove \(\OK_n(\mathbf{0}, F')\), which means we need to
+  prove (1) \( \forall \sigma \) and \(Q\) if \( \langle \mathbf{0}, F
   \rangle \xlongrightarrow{\sigma} \langle Q, F' \rangle \), then
   \(\sharp_{m}(\sigma) - \sharp_{f}(\sigma) \le n\) and (2) \(
   OK(F')\) holds.  There is no \(Q\) and \(\sigma\) s.t. \(\langle
-  {\bf 0}, F \rangle \xlongrightarrow{\sigma} \langle Q, F \rangle \),
+  \mathbf{0}, F \rangle \xlongrightarrow{\sigma} \langle Q, F \rangle \),
   so (1) holds.  From the assumption \(OK_n(P, F)\), we have
   \(OK(F)\), which means \(F\) does not contain both \(\snull\) and
   \(\snnull\). By the definition of function \(filter\_T\), we have
   \(F' = F\backslash\{\snull, \snnull\}\) or \(F - \scon\Sirx
-  \). Therefore \(OK(F')\) holds. So \(\OK_n({\bf 0}, F')\) holds.
+  \). Therefore \(OK(F')\) holds. So \(\OK_n(\mathbf{0}, F')\) holds.
   
     
 \item Case \( P = \Sirx(P_1,P_2) \) and \( \frac{ \scon\Sirx \notin F}
