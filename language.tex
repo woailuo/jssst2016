@@ -118,17 +118,16 @@ infinite set \(\mathcal{H}\) of \(\emph{heap addresses}\) ranged over by
 The operational semantics of the language \(\mathcal{L}\) is given by a
 labeled transition relation \(\langle H, R, s, n, C \rangle
 \xlongrightarrow{\rho}_D \langle H', R', s', n', C' \rangle\) where
-\(\rho\) is a label defined by the BNF $\rho ::= \Malloc(x) \mid \Free
-\mid \snull \mid \snnull \mid \tau$.  The label \(\Malloc(x')\)
-expresses an allocation of a new memory cell, and the pointer to the new
-cell is bound to a (fresh) variable \(x\).  The label \(\Free\)
-expresses a deallocation of a memory cell.  The label \(\snull\)
-expresses making an assumption that \(*x\) is a null pointer; the label
-$\snnull$ expresses not.  The label \(\tau\) expresses an action other
-than the above.; we often omit \(\tau\) in the relation
-\(\xlongrightarrow{\tau}_D\).  The metavariable \(\sigma\) is used for a
-finite sequence of actions \(\rho_1\dots\rho_n\). The
-\(\xlongrightarrow{\rho_1\dots\rho_n}_D\) is short for
+\(\rho\) is a label defined by the BNF $\rho ::= \Malloc \mid \Free \mid
+\snull \mid \snnull \mid \tau$.  The label \(\Malloc\) expresses an
+allocation of a new memory cell.  The label \(\Free\) expresses a
+deallocation of a memory cell.  The label \(\snull\) expresses making an
+assumption that \(*x\) is a null pointer; the label $\snnull$ expresses
+not.  The label \(\tau\) expresses an action other than the above.; we
+often omit \(\tau\) in the relation \(\xlongrightarrow{\tau}_D\).  The
+metavariable \(\sigma\) is used for a finite sequence of actions
+\(\rho_1\dots\rho_n\). The \(\xlongrightarrow{\rho_1\dots\rho_n}_D\) is
+short for
 \(\xlongrightarrow{\rho_1}_D\xlongrightarrow{\rho_2}_D\dots\xlongrightarrow{\rho_n}_D\).
 We write \(\xLongrightarrow{\rho}_D\) for
 \(\xlongrightarrow{}_D^*\xlongrightarrow{\rho}_D\xlongrightarrow{}_D^*\).
@@ -241,7 +240,7 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 \infrule[Sem-Malloc]
 {l \notin \DOM(H) \andalso n > 0}
 {\langle H\coma R\coma  \LET x = \Malloc() \; \IN s , n, C\rangle
-  \xlongrightarrow{\Malloc{(x')}}_{D}
+  \xlongrightarrow{\Malloc}_{D}
   \langle H \Lfc l \mapsto v\Rfc \coma R\Lfc x' \mapsto l \Rfc \coma   \Lb x'/x \Rb s , n-1, C  \rangle }
 
 \rulesp
@@ -285,7 +284,7 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 %% {\langle H, R, \scon\Sirx s, n, C \rangle \xlongrightarrow{\rho}_{D} \CONSTEX }
 
 \infax[Sem-OutOfMem]
-{ \langle H\coma R\coma \LET x = \Malloc() \ \IN s ,  0, C  \rangle    \xlongrightarrow{\Malloc{(x')}}_{D}
+{ \langle H\coma R\coma \LET x = \Malloc() \ \IN s ,  0, C  \rangle    \xlongrightarrow{\Malloc}_{D}
   \OVERFLOW}
 
 \end{minipage}

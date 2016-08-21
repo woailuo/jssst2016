@@ -57,6 +57,8 @@
 \newcommand\MEMEX{\mathbf{MemEx}}
 \newcommand\CONSTEX{\mathbf{ConstEx}}
 
+\newenvironment{pfof}[1]{\paragraph*{Proof of {#1}}}{\qed}
+
 \newcommand\xnull{*x = \NULL}
 \newcommand\xnnull{*x \ne \NULL}
 %% \newcommand\assx{\mathbf{assume(x = null)}}
@@ -78,6 +80,7 @@
 \newcommand\FILTER{\mathit{filter}}
 
 \newtheorem{theorem}{Theorem}[section]
+\newtheorem{conjecture}{Conjecture}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
@@ -115,7 +118,7 @@
 \input{introduction}
 \input{language}
 \input{typesystem}
-\input{reconstruction}
+% \input{reconstruction}
 \input{relatedwork}
 \input{conclusion}
 
@@ -124,5 +127,9 @@
 
 \bibliographystyle {jssst}
 \bibliography {tan}
+
+\appendix
+
+\input{proof}
 
 \end{document}
