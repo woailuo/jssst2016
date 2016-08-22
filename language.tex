@@ -61,8 +61,8 @@ which is pointed to by \(x\) to the value \(y\). The statement
 \(\Malloc()\) allocates a new memory cell.  We assume that the size of
 every memory cell is identical.  The expression \(\NULL\) evaluates to
 the null pointer.  The expression $*y$ evaluates to the content of the
-memory cell pointed to by \(y\).  The statement \(\IFNULL(*x) \THEN s_1
-\ELSE s_2\) executes \(s_1\) if \(*x\) is \(\NULL\) and executes \(s_2\)
+memory cell pointed to by \(y\).  The statement \(\IFNULL(*x) \; \THEN s_1
+\; \ELSE s_2\) executes \(s_1\) if \(*x\) is \(\NULL\) and executes \(s_2\)
 otherwise. The statement \(f(\vec{x})\) executes the procedure \(f\)
 with arguments \(\vec{x}\).  For simplicity, a value is either a pointer
 or $\NULL$.
@@ -123,7 +123,7 @@ labeled transition relation \(\langle H, R, s, n, C \rangle
 allocation of a new memory cell.  The label \(\Free\) expresses a
 deallocation of a memory cell.  The label \(\snull\) expresses making an
 assumption that \(*x\) is a null pointer; the label $\snnull$ expresses
-not.  The label \(\tau\) expresses an action other than the above.; we
+not.  The label \(\tau\) expresses an action other than the above; we
 often omit \(\tau\) in the relation \(\xlongrightarrow{\tau}_D\).  The
 metavariable \(\sigma\) is used for a finite sequence of actions
 \(\rho_1\dots\rho_n\). The \(\xlongrightarrow{\rho_1\dots\rho_n}_D\) is
@@ -298,7 +298,7 @@ satisfies the rules in Figure~\ref{fig:transitionRules}.  In these
 rules, $E$ is a \emph{context} defined by $E ::= E;s \mid []$.
 
 The operational semantics is, except for the multiset of facts $C$,
-almost the same as the previous framework~\cite{}.  Important invariants
+almost the same as the previous framework.  Important invariants
 of a configuration is that (1) if $C$ contains $\scon(*x)$, then the
 value of the expression $*x$ is not changed in the next step and (2) if
 $C$ contains $\snull$ (resp., $\snnull$), then the value of $*x$ is
@@ -320,8 +320,9 @@ removing one $\scon(*x)$ from $C$.  (Recall that $C$ is a
 \emph{multiset} of facts.)  If $C'$ does not contain $\scon(*x)$, then
 it deletes all the facts related to $*x$.  Otherwise, it returns $C'$.
 
-We explain the rules related to path sensitivity and the
-constantness annotations; for the other rules, see~\cite{}.
+We explain the rules related to path sensitivity and the constantness
+annotations; for the other rules, see
+Figure~\ref{fig:transitionRules}.
 \begin{itemize}
 \item \textsc{Sem-ConstSeq}: The end of the $\mathbf{const}$ block is
       marked at the end of the current continuation.  The fact
@@ -338,9 +339,9 @@ constantness annotations; for the other rules, see~\cite{}.
       \textsc{Sem-IfConstNullT}, and \textsc{Sem-IfConstNullF}: These
       rules handle an $\mathbf{if}$-statements depending on whether $*x$
       is null or not.  The semantics records which branch is taken to
-      the multiset of facts $C$ only if $C$ contains $\Sirx$.
-      Otherwise, even if the semantics recorded $\snull(*x)$ or
-      $\snnull(*x)$ to $C$, it may not be reliable in the sense of the
+      the multiset of facts $C$ only if $C$ contains $\scon\Sirx$.
+      Otherwise, even if the semantics recorded $\snull$ or
+      $\snnull$ to $C$, it may not be reliable in the sense of the
       invariant (2) above since the value of $*x$ may be changed by an
       assignment via an alias of $x$.
 \item \textsc{Sem-ConstSkip}: By using the function $\FILTER$ above,

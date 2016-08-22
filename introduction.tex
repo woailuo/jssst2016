@@ -20,12 +20,13 @@ management~\cite{DBLP:conf/aplas/SuenagaK09,DBLP:conf/pldi/HeineL03,DBLP:conf/si
 and development of practical static analyzer such as \emph{Infer}
 (\url{http://fbinfer.com/}).
 
-Among the typical bugs in memory usage, we have been investigating a
-problem of memory consumption analysis.  We are interested in estimating
-an upper-bound of memory consumption of a program with manual memory
-management.  As a first step to this goal, in the previous work, we
-proposed a \emph{behavioral type system} for such
-programs~\cite{tanPPL2014}.
+Among the typical bugs (e.g. double frees, illegal accessing of
+dangling pointers and memory-leaks) in memory usage, we have been
+investigating a problem of memory consumption analysis.  We are
+interested in estimating an upper bound of memory consumption of a
+program with manual memory management.  As a first step to this goal,
+in the previous work, we proposed a \emph{behavioral type system} for
+such programs~\cite{tanPPL2015}.
 
 % Therefore, many static verification methods have been proposed to
 % guarantee safe memory deallocation. They prove \emph{partial}
@@ -66,9 +67,9 @@ For example, consider the following C function \verb|h1|.
 By using our previous type system, we can infer that this function
 behaves according to a \emph{behavioral type}
 $\Malloc;\Malloc;\Free;\Free$ that expresses that this function performs
-allocation twice and deallocation twice.  By inspecting this behavioral
+allocation twice and then deallocation twice.  By inspecting this behavioral
 type, we can obtain information on how much memory this program may
-consume at most.  Our type system~\cite{} can also deal with more
+consume at most.  Our previous type system can also deal with more
 complex control statement and recursive function calls.
 
 One problem in the previous type system consists in how we analyze a
@@ -202,9 +203,7 @@ follows. Section~\ref{sec:language} describes an imperative language
 with allocation and deallocation primitives and its operational
 semantics. Section~\ref{sec:typesystem} introduces the extended
 behavioral type system with path-sensitive behavioral
-types. Section~\ref{sec:reconstruction} describes the type
-reconstruction procedure.
-% Section~\ref{sec:experiments} shows some
+types. % Section~\ref{sec:experiments} shows some
 % experiments and give a discussion;
 Section~\ref{sec:relatedwork} discusses the related work.
 Section~\ref{sec:conclusion} concludes this paper.

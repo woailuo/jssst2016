@@ -68,7 +68,7 @@ assigns a procedure type to a function name.
 Figure~\ref{fig:bdRules} defines the operational semantics of the
 behavioral types.  The semantics is defined by a labeled transition
 system over configuration of the shape $\langle P, C \rangle$.  Here,
-$C$ is the multiset of facts that holds.  We add explanation to
+$C$ is the multiset of facts that hold.  We add explanation to
 important rules.
 \begin{itemize}
  \item \textsc{Tr-Bind}: The behavioral type $(x)P$ picks up a fresh
@@ -284,7 +284,7 @@ that, for any \(P_1'\), $C'$, and \(\rho\), if \( \langle P_1, C \rangle
 \xlongrightarrow{\rho} \langle P_1', C' \rangle \), then there exists
 \(P_2'\) such that \( \langle P_2, C \rangle \xLongrightarrow{\rho}
 \langle P_2', C' \rangle \) and \(C' \vdash P_1' \le P_2'\).  We write
-\(P_1 \le P_2\) if \(C \vdash P_1 \le P_2\) for any F.
+\(P_1 \le P_2\) if \(C \vdash P_1 \le P_2\) for any \(C\).
 \end{myDef}
 
 \begin{figure*}
@@ -451,8 +451,8 @@ consumption.  We first define ``memory consumption'' of a behavioral
 type.
 
 \begin{myDef}
-\label{df:okn} We write \(OK_n(P, C)\) if (1) \(\langle P, F \rangle
-\xlongrightarrow{\sigma} \langle P', F'\rangle \) implies
+\label{df:okn} We write \(OK_n(P, C)\) if (1) \(\langle P, C \rangle
+\xlongrightarrow{\sigma} \langle P', C'\rangle \) implies
 \(\sharp_\Malloc(\sigma) - \sharp_\Free(\sigma) \le n\) where
 $\sharp_\rho(\sigma)$ is the number of $\rho$ in $\sigma$.
 \end{myDef}
@@ -466,7 +466,7 @@ If
   \item $\OK_n(P,C)$, and
   \item $n' \ge n$,
  \end{itemize}
- Then, \(\langle H, R, s, n, C \rangle \xLongrightarrow{\sigma}^* \OVERFLOW \).
+ Then, \(\langle H, R, s, n', C \rangle \not\xLongrightarrow{\sigma}^* \OVERFLOW \).
 \end{conjecture}
 
 The conjecture above states that, if $\vdash \langle D, s \rangle \COL
