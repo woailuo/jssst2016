@@ -147,7 +147,7 @@ important rules.
 { \langle (x)P, C \rangle \rightarrow \langle [x'/x]P, C \rangle }
 
 \infax[Tr-Const]
-{ \langle \scon\Sirx P, C \rangle \rightarrow \langle P;\Endconst, C + \{\scon\Sirx\} \rangle }
+{ \langle \scon\Sirx P, C \rangle \rightarrow \langle P;\Endconst, C + \scon\Sirx \rangle }
 
 \infrule[Tr-Endconst]
 {C' = \FILTER(C, *x)}
@@ -178,14 +178,13 @@ important rules.
 { \langle \Sirx (P_1,P_2), C \rangle \rightarrow \langle P_2, C \rangle }
 \end{minipage}
 
-
 \infrule[Tr-ConstNondet1]
 { \snull, \snnull \notin C \andalso \scon\Sirx \in C }
-{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snull} \langle P_1, C\cup{\snull} \rangle }
+{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snull} \langle P_1, C + \snull \rangle }
 
 \infrule[Tr-ConstNondet2]
 { \snull, \snnull \notin C \andalso \scon\Sirx \in C }
-{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snnull} \langle P_2, C\cup{\snnull} \rangle }
+{ \langle \Sirx (P_1,P_2), C \rangle \xlongrightarrow{\snnull} \langle P_2, C + \snnull \rangle }
 
 % \begin{minipage}{0.5\textwidth}
 % \infax[Tr-ChoiceL]

@@ -166,7 +166,7 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 \infax[Sem-ConstSeq]
 {\langle H, R, \scon\Sirx s, n, C \rangle
 \rightarrow_{D}
-\langle H, R, s;\Endconst , n, C \cup \{\scon\Sirx\} \rangle}
+\langle H, R, s;\Endconst , n, C + \scon\Sirx \rangle}
 
 \rulesp
 
@@ -206,7 +206,7 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 {H(R(x)) = \NULL \andalso \scon\Sirx \in C }
 {\langle H \coma R \coma \IFNULL\Sirx \ \THEN   s_{1}\ \ELSE\  s_{2} \coma  n, C \rangle
   \xlongrightarrow{\snull}_D
-  \langle H\coma R\coma s_{1} \coma n, C\cup \{\snull\} \rangle}
+  \langle H\coma R\coma s_{1} \coma n, C + \snull \rangle}
 
 \rulesp
 
@@ -214,7 +214,7 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 {H(R(x)) \neq \NULL \andalso \scon\Sirx \in C }
 {\langle H \coma R \coma \IFNULL\Sirx\ \THEN  s_{1}\ \ELSE  s_{2} \coma  n, C\rangle
   \xlongrightarrow{\snnull}_D
-  \langle H\coma R\coma s_{2} \coma  n, C\cup \{\snnull\} \rangle}
+  \langle H\coma R\coma s_{2} \coma  n, C + \snnull \rangle}
 
 \rulesp
 
@@ -290,11 +290,9 @@ We write \(\xLongrightarrow{\rho_1\dots\rho_n}_D\) for
 \end{figure*}
 
 The relation $\xlongrightarrow{\rho}_D$ is the least relation that
-satisfies the rules in Figure~\ref{fig:transitionRules}.  In these
-rules, $E$ is a \emph{context} defined by $E ::= E;s \mid []$.
-
-The operational semantics is, except for the multiset of facts $C$,
-almost the same as the previous framework~\cite{tanPPL2015}.  Important
+satisfies the rules in Figure~\ref{fig:transitionRules}.  The
+operational semantics is, except for the multiset of facts $C$, almost
+the same as the previous framework~\cite{tanPPL2015}.  Important
 invariants of a configuration is that (1) if $C$ contains $\scon(*x)$,
 then the value of the expression $*x$ is not changed in the next step
 and (2) if $C$ contains $\snull$ (resp., $\snnull$), then the value of
