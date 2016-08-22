@@ -50,8 +50,9 @@ f(w) & \mbox{otherwise.}
 % and each variable is a pointer.
 
 The syntax of the language \(\mathcal{L}\) is defined by the BNF in
-Figure~\ref{fig:syntax}.  The \(\VAR\) is a countably infinite set of
-\emph{variables}. The statement \(\SKIP\) is a do-nothing statement.
+Figure~\ref{fig:syntax}.  For simplicity, a value of our language is
+either a pointer or $\NULL$.  The \(\VAR\) is a countably infinite set
+of \emph{variables}. The statement \(\SKIP\) is a do-nothing statement.
 The statement \(s_1;s_2\) is a sequential execution of \(s_1\) and
 \(s_2\). The statement \(*x \leftarrow y\) changes the content of cell
 which is pointed to by \(x\) to the value \(y\). The statement
@@ -61,19 +62,14 @@ which is pointed to by \(x\) to the value \(y\). The statement
 \(\Malloc()\) allocates a new memory cell.  We assume that the size of
 every memory cell is identical.  The expression \(\NULL\) evaluates to
 the null pointer.  The expression $*y$ evaluates to the content of the
-memory cell pointed to by \(y\).  The statement \(\IFNULL(*x) \; \THEN s_1
-\; \ELSE s_2\) executes \(s_1\) if \(*x\) is \(\NULL\) and executes \(s_2\)
-otherwise. The statement \(f(\vec{x})\) executes the procedure \(f\)
-with arguments \(\vec{x}\).  For simplicity, a value is either a pointer
-or $\NULL$.
-
-Our type system, as we described in Section~\ref{sec:introduction},
-needs to keep track of whether $*x$ is null or not for a given $x$.  To
-this end, we introduce \emph{constantness annotation} \(\scon\Sirx s\)
-to our language.  By writing this annotation, a programmer declares that
-the value of $*x$ does not change during the execution of $s$.  The
-statement \(\Endconst\) is a marker for the end of a constantness
-annotation, which is used only in a runtime state.
+memory cell pointed to by \(y\).  The statement \(\IFNULL(*x) \; \THEN
+s_1 \; \ELSE s_2\) executes \(s_1\) if \(*x\) is \(\NULL\) and executes
+\(s_2\) otherwise. The statement \(f(\vec{x})\) executes the procedure
+\(f\) with arguments \(\vec{x}\).  The statement \(\scon\Sirx s\) is a
+\emph{constantness annotation}.  By writing this annotation, a
+programmer declares that the value of $*x$ does not change during the
+execution of $s$.  The statement \(\Endconst\) is a marker for the end
+of a constantness annotation, which is used only in a runtime state.
 
 A \emph{procedure definition} $f \mapsto (x_1,\dots,x_n)s$ defines a
 procedure $f$ that takes $x_1,\dots,x_n$ as arguments and executes $s$.
