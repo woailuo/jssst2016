@@ -1,17 +1,16 @@
 %% \section{Abstract}
-\label{sec:abstraction}
-In the previous work, we proposed a behavioral type system for a
-programming language with dynamic memory allocation and deallocation.
-The behavioral type system, which uses sequential processes as types
-where each action is related to an allocation and a deallocation, can
-estimate an upper bound of memory consumption of a program.  However,
-the previous type system did not deal with path-sensitivity, which
-results in an imprecise abstraction even for a simple program.  In
-order to address this problem, we propose an extension of the previous
-type system with path-sensitive behavioral types.  The path-sensitive
-behavioral type carries more information for a program such that it
-can handle path-sensitivity and estimates an upper bound of memory cell
-consumption more precisely.
+\label{sec:abstraction} In the previous work, we proposed a behavioral
+type system for a programming language with dynamic memory allocation
+and deallocation.  The behavioral type system, which uses sequential
+processes as types where each action is related to an allocation and a
+deallocation, can estimate an upper bound of memory consumption of a
+program.  However, the previous type system did not deal with
+path-sensitivity, which results in an imprecise abstraction even for a
+simple program.  In order to address this problem, we propose an
+extension of the previous type system with \emph{path-sensitive
+behavioral types}.  Our extended type system can capture path-sensitive
+behavior of a program, which enables more precise analysis of the
+behavior of a program.
 
 % We
 % prove the soundness of the extended type system and propose a type

@@ -279,11 +279,11 @@ $\Gamma$''.
 
 We incorporate subtyping to our type system defined as follows.
 \begin{myDef}[Subtyping]
-\label{df:subtype} \(C \vdash P_2 \le P_1\) is the largest relation such
-that, for any \(P_1'\), $C'$, and \(\rho\), if \( \langle P_1, C \rangle
-\xlongrightarrow{\rho} \langle P_1', C' \rangle \), then there exists
-\(P_2'\) such that \( \langle P_2, C \rangle \xLongrightarrow{\rho}
-\langle P_2', C' \rangle \) and \(C' \vdash P_1' \le P_2'\).  We write
+\label{df:subtype} \(C \vdash P_1 \le P_2\) is the largest relation such
+that, for any \(P_2'\), $C'$, and \(\rho\), if \( \langle P_2, C \rangle
+\xlongrightarrow{\rho} \langle P_2', C' \rangle \), then there exists
+\(P_1'\) such that \( \langle P_1, C \rangle \xLongrightarrow{\rho}
+\langle P_1', C' \rangle \) and \(C' \vdash P_1' \le P_2'\).  We write
 \(P_1 \le P_2\) if \(C \vdash P_1 \le P_2\) for any \(C\).
 \end{myDef}
 

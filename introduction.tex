@@ -20,13 +20,12 @@ management~\cite{DBLP:conf/aplas/SuenagaK09,DBLP:conf/pldi/HeineL03,DBLP:conf/si
 and development of practical static analyzer such as \emph{Infer}
 (\url{http://fbinfer.com/}).
 
-Among the typical bugs (e.g. double frees, illegal accessing of
-dangling pointers and memory-leaks) in memory usage, we have been
-investigating a problem of memory consumption analysis.  We are
-interested in estimating an upper bound of memory consumption of a
-program with manual memory management.  As a first step to this goal,
-in the previous work, we proposed a \emph{behavioral type system} for
-such programs~\cite{tanPPL2015}.
+We are interested in statically estimating an upper-bound of memory
+consumption of a program with manual memory management.  We are
+especially interested in the upper-bound analysis of a potentially
+nonterminating program such as Web servers and operating systems.  Such
+information about an upper bound of memory consumption is useful as a
+certificate of memory-leak freedom of these important software.
 
 % Therefore, many static verification methods have been proposed to
 % guarantee safe memory deallocation. They prove \emph{partial}
@@ -55,7 +54,10 @@ such programs~\cite{tanPPL2015}.
 % \label{ex:np}
 % \end{figure*}
 
-For example, consider the following C function \verb|h1|.
+As a first step to this goal, in the previous work, we proposed a
+\emph{behavioral type system} for imperative programs with manual memory
+management~\cite{tanPPL2014}.  In order to show how our previous type
+system works, consider the following C function \verb|h1|.
 \begin{verbatim}
   void h1() {
     int *x, *y;

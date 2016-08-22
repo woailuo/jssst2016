@@ -298,11 +298,11 @@ satisfies the rules in Figure~\ref{fig:transitionRules}.  In these
 rules, $E$ is a \emph{context} defined by $E ::= E;s \mid []$.
 
 The operational semantics is, except for the multiset of facts $C$,
-almost the same as the previous framework.  Important invariants
-of a configuration is that (1) if $C$ contains $\scon(*x)$, then the
-value of the expression $*x$ is not changed in the next step and (2) if
-$C$ contains $\snull$ (resp., $\snnull$), then the value of $*x$ is
-equal to $\NULL$ (resp., not equal to null).
+almost the same as the previous framework~\cite{tanPPL2014}.  Important
+invariants of a configuration is that (1) if $C$ contains $\scon(*x)$,
+then the value of the expression $*x$ is not changed in the next step
+and (2) if $C$ contains $\snull$ (resp., $\snnull$), then the value of
+$*x$ is equal to $\NULL$ (resp., not equal to null).
 
 In order to manipulate the $C$ part of a configuration, we use a
 function $\FILTER(C, *x)$ in the rules for the operational semantics
@@ -321,8 +321,7 @@ removing one $\scon(*x)$ from $C$.  (Recall that $C$ is a
 it deletes all the facts related to $*x$.  Otherwise, it returns $C'$.
 
 We explain the rules related to path sensitivity and the constantness
-annotations; for the other rules, see
-Figure~\ref{fig:transitionRules}.
+annotations; for the other rules, see~\ref{tanPPL2014}.
 \begin{itemize}
 \item \textsc{Sem-ConstSeq}: The end of the $\mathbf{const}$ block is
       marked at the end of the current continuation.  The fact
