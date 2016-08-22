@@ -317,7 +317,7 @@ removing one $\scon(*x)$ from $C$.  (Recall that $C$ is a
 it deletes all the facts related to $*x$.  Otherwise, it returns $C'$.
 
 We explain the rules related to path sensitivity and the constantness
-annotations; for the other rules, see~\ref{tanPPL2014}.
+annotations; for the other rules, see~\cite{tanPPL2015}.
 \begin{itemize}
 \item \textsc{Sem-ConstSeq}: The end of the $\mathbf{const}$ block is
       marked at the end of the current continuation.  The fact
@@ -331,14 +331,13 @@ annotations; for the other rules, see~\ref{tanPPL2014}.
       type system introduced later does not guarantee unreachability to
       this exceptional state.
 \item \textsc{Sem-IfNullT}, \textsc{Sem-IfNullF},
-      \textsc{Sem-IfConstNullT}, and \textsc{Sem-IfConstNullF}: These
-      rules handle an $\mathbf{if}$-statements depending on whether $*x$
-      is null or not.  The semantics records which branch is taken to
-      the multiset of facts $C$ only if $C$ contains $\scon\Sirx$.
-      Otherwise, even if the semantics recorded $\snull$ or
-      $\snnull$ to $C$, it may not be reliable in the sense of the
-      invariant (2) above since the value of $*x$ may be changed by an
-      assignment via an alias of $x$.
+  \textsc{Sem-IfConstNullT}, and \textsc{Sem-IfConstNullF}: These
+  rules handle an $\mathbf{if}$-statements depending on whether $*x$
+  is null or not.  The semantics records which branch is taken to the
+  multiset of facts $C$ only if $C$ contains $\scon\Sirx$.  Otherwise,
+  even if the semantics recorded $\snull$ or $\snnull$ to $C$, it may
+  not be reliable in the sense of the invariant (2) above since the
+  value of $*x$ may be changed by an assignment via an alias of $x$.
 \item \textsc{Sem-ConstSkip}: By using the function $\FILTER$ above,
       this rule removes one $\mathbf{endconst}(*x)$ from $C$ and
       conducts ``garbage collection'' of the facts related to $*x$ if
