@@ -24,18 +24,19 @@ Behavioral types, ranged over by \(P\), specify the behavior of
 statements.  The type $\mathbf{0}$ represents the do-nothing behavior.
 The type $P_1;P_2$ is the sequential composition of $P_1$ and $P_2$.
 The types $\Malloc$ and $\Free$ represents one allocation and one
-deallocation, respectively.  The type $(x)P$ is the behavior that binds
-a variable $x$ and behaves as specified by $P$; the type $P$ may be
-dependent to $x$.  For example, the behavior of the statement $\LET\ x =
-y\ \IN\ \SKIP$ is represented by $(x)\mathbf{0}$ since it binds the
-variable $x$ and does nothing. The type $(*x)(P_1,P_2)$ is the behavior
-of a branching statement.  This type represents the behavior $P_1$ if
-$*x$ is null; $P_2$ otherwise.  The type represents the behavior of a
-statement that works as specified in $P$ under the assumption that the
-value of $*x$ does not change.  The type $\Endconst$ represents the
-behavior that marks the end of the constantness annotation.  The types
-$\alpha$ and $\mu\alpha.P$ allow to specify a recursive behavior.  The
-type $\mu\alpha.P$ represents the behavior $P$, in which $\alpha$
+deallocation, respectively.  The type $(x)P$ is the behavior that
+binds a variable $x$ and behaves as specified by $P$; the type $P$ may
+be dependent to $x$.  For example, the behavior of the statement
+$\LET\ x = y\ \IN\ \SKIP$ is represented by $(x)\mathbf{0}$ since it
+binds the variable $x$ and does nothing. The type $(*x)(P_1,P_2)$ is
+the behavior of a branching statement.  This type represents the
+behavior $P_1$ if $*x$ is null; $P_2$ otherwise.  The type
+$\scon\Sirx$ represents the behavior of a statement that works as
+specified in $P$ under the assumption that the value of $*x$ does not
+change.  The type $\Endconst$ represents the behavior that marks the
+end of the constantness annotation.  The types $\alpha$ and
+$\mu\alpha.P$ allow to specify a recursive behavior.  The type
+$\mu\alpha.P$ represents the behavior $P$, in which $\alpha$
 represents the behavior of $\mu\alpha.P$ itself.  For example,
 $\mu\alpha.(\Malloc;\Free;\alpha)$ represents a statement that repeats
 an allocation followed by a deallocation forever.  $\Gamma$, a
@@ -450,7 +451,7 @@ consumption.  We first define ``memory consumption'' of a behavioral
 type.
 
 \begin{myDef}
-\label{df:okn} We write \(OK_n(P, C)\) if (1) \(\langle P, C \rangle
+\label{df:okn} We write \(OK_n(P, C)\) if \(\langle P, C \rangle
 \xlongrightarrow{\sigma} \langle P', C'\rangle \) implies
 \(\sharp_\Malloc(\sigma) - \sharp_\Free(\sigma) \le n\) where
 $\sharp_\rho(\sigma)$ is the number of $\rho$ in $\sigma$.
